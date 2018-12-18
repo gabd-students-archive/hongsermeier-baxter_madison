@@ -1,5 +1,5 @@
 # hongsermeier-baxter_madison
-This repo belongs to madisonhbaxter 
+This repo belongs to 
 # Madison Hongsermeier-Baxter    
 
 ## Southeast Missouri State University     
