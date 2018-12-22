@@ -87,3 +87,30 @@ kable(head(airquality),
 
 ```
 
+```{r}
+chicks_lm <- lm(weight ~ feed, data = chickwts)
+
+summary(chicks_lm)
+```
+
+```{r}
+kable(chickwts)
+```
+
+```{r}
+xtable(chicks_lm) %>% kable()
+```
+```{r}
+head(trees)
+```
+
+```{r}
+trees_lm <- lm(Girth ~ Height, data = trees)
+
+summary(trees_lm)
+```
+
+```{r}
+xtable(trees_lm) %>% kable()
+```
+
