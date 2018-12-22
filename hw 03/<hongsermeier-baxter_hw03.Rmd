@@ -86,6 +86,9 @@ kable(head(airquality),
     
 
 ```
+```{r}
+chickwts
+```
 
 ```{r}
 chicks_lm <- lm(weight ~ feed, data = chickwts)
@@ -96,6 +99,9 @@ summary(chicks_lm)
 ```{r}
 kable(chickwts)
 ```
+
+Running kable on chickwts showed all of the observed weights for each type of feed.
+
 
 ```{r}
 xtable(chicks_lm) %>% kable()
@@ -114,3 +120,5 @@ summary(trees_lm)
 xtable(trees_lm) %>% kable()
 ```
 
+
+$\chi_c^2 = \Sigma \frac{(O_i - E_i)^2}{E_i}$
