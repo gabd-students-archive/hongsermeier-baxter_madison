@@ -1,6 +1,6 @@
  ---
-  title: "Useful Title"
-  author: "Your Name"
+  title: "hw 03"
+  author: "Madison Hongsermeier-Baxter"
   date: "`r format(Sys.time(), '%d %B %Y')`"
   output: html_notebook
   editor_options: 
