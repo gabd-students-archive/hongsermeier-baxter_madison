@@ -626,18 +626,147 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
 ### Section 3.8 Position adjustments
 
 
+This code represents two bar charts. The first chart is all in gray. In the second chart, the bars are different colors depending on the values they represent.
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, colour = cut))
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = cut))
+```
+
+
+
+
+
+
+This code represents the same bar chart. Except this time, the fill aesthetic is mapped to the variable "clarity" instead of the variable "cut".
+
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity))
+```
+
+
+
+
+
+
+This code represents the same bar chart as above but with different levels of transparency. The first chart has been made more transparent, and the second chart has been made completely transparent.
+
+
+```{r}
+ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) + 
+  geom_bar(alpha = 1/5, position = "identity")
+ggplot(data = diamonds, mapping = aes(x = cut, colour = clarity)) + 
+  geom_bar(fill = NA, position = "identity")
+```
+
+
+
+
+
+This code represents the same data, but this time, the bars of the chart have been made the same height. This may be used to compare clarity proportions.
+
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill")
+```
+
+
+
+
+
+
+
+This code represents the same data, but the overlapping data are now beside one another instead of being stacked.
+
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge")
+```
+
+
+
+
+
+
+
+This code represents a scatter plot that uses "position = jitter" to spread out the points so that they don't overlap.
+
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), position = "jitter")
+```
+
+
+
+
+
+
 #### Section 3.8 Questions
 
 **1:** What is the problem with this plot? How could you improve it. *Hint:* Remember the size of the `mpg` data set from earlier in this exercise. Does the number of points seem correct? **Note:** Write the code to improve it. 
 
 
+In this plot, there seems to be fewer points than there actually are because of overlap. The code below has been corrected to add jitter so there will be less overlap.
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_jitter()
+```
+
+
+
+
 **2:** What parameters to `geom_jitter()` control the amount of jittering?
+
+
+The amount of jittering is controlled by the parameters height and width.
+
 
 
 **3:** Compare and contracts `geom_jitter()` with `geom_count()`.
 
 
+
+"geom_jitter()" adds jitter to reduce overlap. "geom_count()" changes the size of a point depending on how many points are overlapping in that location.
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_jitter()
+
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_count()
+```
+
+
+
+
+
+
 **4:** What is the default position adjustement for `geom_boxplot()`? Create a visualization of the `mpg` dataset that demonstrates it.
+
+
+
+"position_dodge()" is the default position adjustment.
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = class, y = hwy, color = drv)) + 
+  geom_boxplot(position = "dodge")
+```
+
+
+
+
+
 
 
 ### Section 3.9: Coordinate systems
