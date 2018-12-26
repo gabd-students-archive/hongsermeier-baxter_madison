@@ -51,6 +51,14 @@ ggplot(data = <DATA>) +
 
 
 
+
+#### Section 3.2 Questions
+
+Answer the questions *completely.* Some answers will require you to write code in a code chunk and also to type text before or after the chunk. Other answers will require only code or only text. 
+
+**1:** Run ggplot(data = mpg). What do you see?
+
+
 the code "ggplot(data = mpg)" creates an empty graph.
 
 ```{r}
@@ -59,14 +67,27 @@ ggplot(data = mpg)
 
 
 
+**2:** How many rows are in `mpg`? How many columns? **Hint:** Use the `dim()` function. Type `dim()` in the console to learn what `dim()` does.
+
+
 "mpg" has 234 rows and 11 columns.
+
 ```{r}
-mpg
+dim(mpg)
+
 ```
 
 
 
+**3:** What does the `drv` variable describe? Read the help for `?mpg` to find out.
+
+
+
 The "drv" variable in "mpg" describes if a car is front-wheel drive, rear wheel drive, or four-wheel drive.
+
+
+
+**4:** Make a scatterplot of `hwy` vs `cyl`.
 
 
 
@@ -78,9 +99,7 @@ ggplot(data = mpg) +
 
 
 
-
-
-
+**5:** What happens if you make a scatterplot of `class` vs `drv`? Why is the plot not useful?
 
 
 This a scatterplot of class vs drv. The plot is not useful because the correlation between the variables "class" and "drv" is not relevant to the relationship between engine size and fuel efficiency. Also, the plot is not useful because it does not show any clear correlation between the variables.
@@ -91,29 +110,51 @@ ggplot(data = mpg) +
   geom_point(mapping = aes(x = class, y = drv))
 ```
 
-What happens if you make a scatterplot of class vs drv? Why is the plot not useful?
-
-
-#### Section 3.2 Questions
-
-Answer the questions *completely.* Some answers will require you to write code in a code chunk and also to type text before or after the chunk. Other answers will require only code or only text. 
-
-**1:** Run ggplot(data = mpg). What do you see?
-
-
-**2:** How many rows are in `mpg`? How many columns? **Hint:** Use the `dim()` function. Type `dim()` in the console to learn what `dim()` does.
-
-
-**3:** What does the `drv` variable describe? Read the help for `?mpg` to find out.
-
-
-**4:** Make a scatterplot of `hwy` vs `cyl`.
-
-
-**5:** What happens if you make a scatterplot of `class` vs `drv`? Why is the plot not useful?
 
 
 ### Section 3.3: Aesthetic mappings
+
+
+
+This code creates a scatterplot of "hwy" vs "displ" with different colored points to represent different classes of vehicle.
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+
+
+
+
+This code creates a scatterplot of "hwy" vs "displ" with different sized points to represent different classes of vehicle.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+```
+
+
+
+
+
+This code creates a scatterplot of "hwy" vs "displ" with different transparencies of points to represent different classes of vehicle.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+```
+
+
+
+
+This code creates a scatterplot of "hwy" vs "displ" with different shapes of points to represent different classes of vehicle.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+```
+
+
+
 
 
 #### Section 3.3 questions
