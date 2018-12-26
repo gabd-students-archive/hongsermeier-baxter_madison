@@ -357,14 +357,37 @@ ggplot(data = mpg) +
 
 
 
+
+
 **4:** Take the first faceted plot below. What are the advantages to using faceting instead of the colour aesthetic? What are the disadvantages? How might the balance change if you had a larger dataset?
+
+
+An advantage of faceting over color aesthetic is that you can more easily compare the "hwy" vs "displ" scatterplots for each class. An advantage of using the color aestheic over faceting is that you can more easily compare the values of "hwy" and "displ".
+
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+```
+
+
 
 
 
 **5:** Read `?facet_wrap`. What does `nrow` do? What does `ncol` do? What other options control the layout of the individual panels? Why doesn’t `facet_grid()` have nrow and ncol argument?
 
 
+"nrow" is used to specify the number of rows. "ncol" is used to specify the number of columns. There are other options that control the layout of individual panels, such as "scales" and "dir". "facet_grid()" doesn't have nrow and ncol arguments because the numbers of rows and columns are already determined by the facets and directions.
+
+
+
 **6:** When using `facet_grid()` you should usually put the variable with more unique levels in the columns. Why?
+
+
+The variable with the more unique levels should be in the columns so that the plot will have a more favorable layout and be easier to read. 
+
+
 
 ### Section 3.6: Geometric objects
 
