@@ -488,7 +488,23 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
 **1:** What geom would you use to draw a line chart? A boxplot? A histogram? An area chart? **Note:** You will have to make some types of these charts in Part 2 of this assignment.
 
 
+
+To make a line chart, you would use a line geom, which is represented by geom_line(). To make a boxplot, you would use a boxplot geom, which is represented by geom_boxplot(). To make a histogram you would make a histogram geom, which is represented by geom_histogram(). To make an area chart, you would use an area geom, which is represented by geom_area().
+
+
+
+
 **2:** Run this code in your head and predict what the output will look like. Then, run the code in R and check your predictions.
+
+
+Prediction: The plot will be a plot of "displ" vs "hwy" for the different values of the variable "drv". There will be two layers: a layer that represents the data using points and a layer that represents the data using lines.
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
 
 
 
@@ -496,10 +512,34 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
 **Note:** Skip the "Why do you think I used it earlier in the chapter?" question.
 
 
+"show.legend = FALSE" removes the legend. The plot remains the same, but there is no key displayed. If you remove "show.legend = FALSE", the legend reappears.
+
+
+
 **4:** What does the `se` argument to `geom_smooth()` do?
 
 
+The "se" arguments specifies if a confidence interval should be included.
+
+
+
 **5:** Will these two graphs look different? Why/why not?
+
+
+
+The two graphs will not look different. The code is written differently in the first time in order to avoid repetition, but it still codes for the same data.
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+
 
 
 **6:** Recreate the R code necessary to generate the following graphs. **Note:** Enter a separate code chunk for each graph, numbered 1 to 6, starting row-wise at upper left. 
