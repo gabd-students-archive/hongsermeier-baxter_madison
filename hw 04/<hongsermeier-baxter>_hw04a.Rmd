@@ -155,6 +155,13 @@ ggplot(data = mpg) +
 
 
 
+This code creates a scatterplot of "hwy" vs "displ" where all of the points are blue.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+```
+
 
 
 #### Section 3.3 questions
@@ -162,10 +169,82 @@ ggplot(data = mpg) +
 **1:** What’s gone wrong with this code? Why are the points not blue?
 
 
+The original code does not result in blue points because "color = blue" was within "aes()" The code block below has a corrected version of the code and results in a graph with blue points.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+```
+
+
+
 **2:** Which variables in `mpg` are categorical? Which variables are continuous? (*Hint:* type `?mpg` to read the documentation for the dataset). How can you see this information when you run mpg?
 
 
+The variables "model", "trans", "drv", "fl", and "class" are categorical. The variables "hwy", "cty", "cyl", "year", and "displ" are continuous. When you run mpg, you can see which varibles are categorical and which variables are continous because the  continous variables of mpg are numerical and have a logical order, and the categorical variables have a limited number of categories and no logical order.
+
+
+
 **3:** Map a continuous variable to color, size, and shape. How do these aesthetics behave differently for categorical vs. continuous variables? **Note:** You need several code chunks here to answer this question.
+
+
+
+When mapping a categorical variable, such as "class", to a color, it results in a finite number of different unordered colors to represent the values. However, when mapping a continuous variable, such as "cty", to a color, the values are represented by a color spectrum. The spectrum has a logical order and infinite different colors.
+
+
+color = class
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+
+color = cty
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = cty))
+```
+
+
+
+
+
+
+When mapping a categorical variable, such as "class", to a size, it results in a finite number of different unordered sizes to represent the values. When mapping a continuous variable, such as "cty", to a size, the size of the points increase and decrease according to the logical order of the values.
+
+
+size = class
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+```
+
+
+size = cty
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = cty))
+```
+
+
+
+
+
+
+When mapping a categorical variable, such as "class", to a shape, it results in a finite number of different unordered shapes to represent the values. However, when mapping a continuous variable, such as "cty", to a shape, it results in the error message "A continuous variable can not be mapped to shape". The shapes are not able to properly convey the nature of the continous variable because the shape aesthetic is finite and does not have a logical order.
+
+
+shape = class
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+```
+
+
+shape = cty
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = cty))
+```
 
 
 **4:** What happens if you map the same variable to multiple aesthetics?
