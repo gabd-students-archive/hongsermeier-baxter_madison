@@ -146,6 +146,16 @@ Plot 7
 
 #### Plot 7
 
+```{r}
+ggplot(data = msleep) + 
+  geom_boxplot(mapping = aes(x = order, y = sleep_total))
+
+ggplot(data = msleep) + 
+  geom_boxplot(mapping = aes(x = order, y = sleep_total)) +
+  coord_flip()
+```
+
+
 Plot 8
 
     Plot type: boxplot with points
@@ -160,6 +170,15 @@ Plot 8
 
 #### Plot 8
 
+```{r}
+ggplot(data = msleep, mapping = aes(x = conservation, y = awake, color = conservation)) + 
+  geom_boxplot() + 
+  geom_point() +
+  geom_jitter() +
+  labs(x = "Conservation", y = "Awake") +
+  labs(color= "Conservation")  
+```
+
 Plots 9 and 10.
 
     Make two scatterplots of your choice, with the following constraints.
@@ -168,9 +187,11 @@ Plots 9 and 10.
     Apply facet_wrap() to at least one of the plots using one of the nominal variables. You decide whether you use 2 or 3 columns. Hint: use one of the nominal variables with relatively few different types for wrapping. Explore: What happens if you use a nominal variable like genus, with lots of types?
     You should try a few versions of each graph until you find combinations that you think show some clear trends.
 
-#### Plot 9
+#### Plot 9 and 10
 
-#### Plot 10
+```{r}
+
+```
 
   
     
