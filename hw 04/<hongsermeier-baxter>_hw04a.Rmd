@@ -51,6 +51,49 @@ ggplot(data = <DATA>) +
 
 
 
+the code "ggplot(data = mpg)" creates an empty graph.
+
+```{r}
+ggplot(data = mpg)
+```
+
+
+
+"mpg" has 234 rows and 11 columns.
+```{r}
+mpg
+```
+
+
+
+The "drv" variable in "mpg" describes if a car is front-wheel drive, rear wheel drive, or four-wheel drive.
+
+
+
+This is a scatterplot of hwy vs cyl.
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = hwy, y = cyl))
+```
+
+
+
+
+
+
+
+
+This a scatterplot of class vs drv. The plot is not useful because the correlation between the variables "class" and "drv" is not relevant to the relationship between engine size and fuel efficiency. Also, the plot is not useful because it does not show any clear correlation between the variables.
+
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = class, y = drv))
+```
+
+What happens if you make a scatterplot of class vs drv? Why is the plot not useful?
+
+
 #### Section 3.2 Questions
 
 Answer the questions *completely.* Some answers will require you to write code in a code chunk and also to type text before or after the chunk. Other answers will require only code or only text. 
