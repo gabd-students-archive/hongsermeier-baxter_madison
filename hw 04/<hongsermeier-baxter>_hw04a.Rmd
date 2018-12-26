@@ -773,6 +773,25 @@ ggplot(data = mpg, mapping = aes(x = class, y = hwy, color = drv)) +
 
 **Note:** Read about and do only the code chunk associated with `coord_flip()`. `coord_flip()` is a great layer to use when you have categorical data with longish names as it makes the text easier to read.
 
+
+
+This code represents 2 boxplots. Both represent the same data, but in the second boxplot, the x axis and the y axis have been flipped using "coord_flip()". 
+
+
+```{r}
+
+
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot()
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot() +
+  coord_flip()
+```
+
+
+
+
+
 ### Section 3.10: The layered grammar of graphics
 
 Just read this section as a contextual review of everything you just learned.
