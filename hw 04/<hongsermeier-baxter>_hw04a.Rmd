@@ -392,6 +392,96 @@ The variable with the more unique levels should be in the columns so that the pl
 ### Section 3.6: Geometric objects
 
 
+This code represents data that is presented in two ways. The first portion codes for a plot that uses point geoms, and the second portion codes for a plot that uses point geoms.
+
+```{r}
+# left
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+# right
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+```
+
+
+
+This code represents a plot with 3 different lines. The different lines represent different values of the "drv" variable.
+
+
+```{r}
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
+```
+
+
+
+This code represents 3 "displ" vs "hwy" plots. In the last 2 plots, there are 3 different lines, representing different values for the variable "drv". 
+
+
+```{r}
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+              
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv))
+    
+ggplot(data = mpg) +
+  geom_smooth(
+    mapping = aes(x = displ, y = hwy, color = drv),
+    show.legend = FALSE
+  )
+```
+
+
+
+
+This code represents a plot with both smooth geoms and point geoms.
+
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+```
+
+
+
+
+This code represents the same plot as the above code. However, this code is written in a different way. In this code, the mapping is written in a different way in order to prevent repetition.
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+```
+
+
+
+
+This code represents a plot with multiple layers that have different aesthetics.
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = class)) + 
+  geom_smooth()
+```
+
+
+
+This code represents a plot with different layers that have different data.
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = class)) + 
+  geom_smooth(data = filter(mpg, class == "subcompact"), se = FALSE)
+```
+
+
+
 
 #### Section 3.6.1 Questions
 
