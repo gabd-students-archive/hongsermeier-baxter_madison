@@ -282,6 +282,29 @@ ggplot(data = mpg) +
 ### Section 3.5: Facets
 
 
+This code splits up mpg into facets that display subsets of the data.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+```
+
+
+
+
+This code facets the plot on the combinaion of the vaiables "drv" and "cyl".
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_grid(drv ~ cyl)
+```
+
+
+
+
+
 
 #### Section 3.5 questions
 
@@ -289,11 +312,48 @@ ggplot(data = mpg) +
 
 
 
+Prediction: The facets will be organized according to a logical order.
+
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ cty, nrow = 2)
+```
+
+
+
+
+
 **2:** What do the empty cells in plot with `facet_grid(drv ~ cyl)` mean? How do they relate to this plot?
+
+
+There are empty cells in the plot because there are values at which the two variables do not coincide. For example, none of the vehicles with 4 cylinders have rear-wheel drive, so there is an empty cell at the intersection of these 2 variables. The following code shows where values of the 2 variables coincide and can be used to explain where the empty cells are.
+
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = drv, y = cyl))
+```
+
 
 
 
 **3:** What plots does the following code make? What does `.` do?
+
+The code results in one plot faceted by the variable "drv" and another plot faceted by the variable "cyl". The "." is used to determine whether the plot is faceted in the rows dimension or in the columns dimension. For example, in the first plot, there is a "." in the column section of the code, specifying that the data should be faceted in the rows dimension.
+
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ .)
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(. ~ cyl)
+```
+
 
 
 
