@@ -29,6 +29,8 @@ data(trees)
 ?trees
 ```
 
+
+This is a scatterplot of tree height vs girth. The scatterplot shows a positive correlation between height and girth. In general, as height increases, girth increases as well.
 ```{r}
 ggplot(data = trees) + 
   geom_point(mapping = aes(x = Height, y = Girth))
@@ -80,6 +82,8 @@ lynx_pelts <- data.frame(year, pelts)
 lynx_pelts
 ```
 
+
+This is a line graph of "year" vs "pelts". The graph shows a pattern where "pelts" fluctuates over time. There appears to be a repeating cycle of a larger fluctuation followed by three smaller fluctuations. The cycle takes place over approximately 40 years then repeats. 
 ```{r}
 ggplot(data = lynx_pelts) + 
   geom_line(mapping = aes(x = year, y = pelts), color = "maroon")
@@ -105,6 +109,14 @@ data(iris)
 ?iris
 ```
 
+
+This is a scatterplot of petal length vs petal width. The scatterplot shows a positive correlation between length and width. In general, as length increases, width increases as well.
+```{r}
+ggplot(data = iris) + 
+  geom_point(mapping = aes(x = Petal.Length, y = Petal.Width, color = Species, shape = Species)) +
+  labs(x = "Petal Length", y = "Petal Width")
+```
+
 Plots 4 and 5
 
     This requires two code chunks, which will be nearly identical
@@ -126,6 +138,8 @@ data(msleep)
 ?msleep
 ```
 
+
+This is a violin plot of "vore" vs "sleep_rm". A violin plot is similar to a box plot because both are used to represent distribution of data. However, violin plots use shapes to more accurately portray the variations in the data. The first violin plot is filled with the color gray30, and the second violin plot is filled with the color gray70. Grays extend from gray0 to gray100, with gray100 being the lightest and gray 0 being the darkest, so the gray70 plot is lighter than the gray30 plot.
 ```{r}
 ggplot(data = msleep) + 
   geom_violin(mapping = aes(x = vore, y = sleep_rem), fill = "gray30")
@@ -146,6 +160,8 @@ Plot 7
 
 #### Plot 7
 
+
+These are boxplots of "order" vs "sleep_total". In the second plot, "coord_flip" has been used to switch the x axis and y axis. This organizes the data in a way that makes it easier to visualise the data and read the "order" axis.
 ```{r}
 ggplot(data = msleep) + 
   geom_boxplot(mapping = aes(x = order, y = sleep_total))
@@ -170,6 +186,8 @@ Plot 8
 
 #### Plot 8
 
+
+This plot for "conservation" vs "awake" utilizes both a boxplot layer and a scatterplot layer to display the data. The different values for "conservation" are also specified by color. 
 ```{r}
 ggplot(data = msleep, mapping = aes(x = conservation, y = awake, color = conservation)) + 
   geom_boxplot() + 
@@ -189,29 +207,17 @@ Plots 9 and 10.
 
 #### Plot 9 and 10
 
-```{r}
 
+This is a scatterplot of "awake" vs "bodywt". The plot shows that the animals with the highest weights are also awake for the longest durations. "color = vore" shows that most of these largest animals are also herbivores.
+```{r}
+ggplot(data = msleep, mapping = aes(x = awake, y = bodywt, color = vore)) + 
+  geom_point()
 ```
 
-  
-    
-    
-    
 
-    The first time you use a dataset, load it with the command data(dataset name) in your code chunk. For example, data(faithful) loads the Old Faithful dataset. Technically, you do not have to do this but it is good coding practice. I expect that you will do this.
-
-    After you load the dataset, and only for the first time, enter ?<dataset name> in your code chunk to see the format of the data. For example, ?faithful will give you information about the Old Faithful dataset.
-
-    Note: You should always inspect your data visually. That is why I am asking you to do this step.
-
-    You only need to do these two steps the first time you use a dataset.
-
-    Run each code chunk, and write 1-2 sentences that describes any trends or patterns that you observe in the plot. In other words, think like a scientist!
-
-    Include the #### Plot <no.> header above each plot.
-
-
-
-
-    Describe the patterns or trends you see in each graph.
-
+This is a scatterplot of "sleep_total" vs "brainwt". The plot shows that animals with higher brain weights appear to get less total sleep. Also, "facet_wrap(vore)" shows that "herbi" have some of the highest brain weights and "insect" and "NA" have the lowest overall brain weights.
+```{r}
+ggplot(data = msleep, mapping = aes(x = sleep_total, y = brainwt, color = order)) + 
+  geom_point() +
+  facet_wrap(~ vore, nrow = 2)
+```
