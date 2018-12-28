@@ -472,22 +472,58 @@ filter(df, is.na(x) | x > 1)
 **1.1:** Find all flights with a delay of 2 hours or more.
 
 
+This code represents flights with an arrival delay of at least 120 minutes.
+```{r}
+filter(flights, arr_delay >= 120)
+```
+
 **1.2:** Flew to Houston (IAH or HOU)
 
+
+This code represents flights with destinations of either "IAH" or "HOU".
+```{r}
+filter(flights, dest %in% c("IAH", "HOU"))
+```
 
 **1.3:** Were operated by United (UA), American (AA), or Delta (DL).
 
 
+This code represents flights where "carrier" = "UA", "AA", or "DL".
+```{r}
+filter(flights, carrier %in% c("AA", "DL", "UA"))
+```
+
 **1.4:** Departed in summer (July, August, and September).
 
 
+This code represents flights that departed in month "7", "8", or "9".
+```{r}
+filter(flights, month %in%  c(7, 8, 9))
+```
+
 **1.5:** Arrived more than two hours late, but didn’t leave late.
+
+
+This code represents flights that do not have a departure delay but have an arrival delay of at least 120 minutes.
+```{r}
+filter(flights, dep_delay <= 0, arr_delay > 120)
+```
 
 **1.6:** Were delayed by at least an hour, but made up over 30 minutes in flight. This is a tricky one. Do your best.
 
 
+This code represents flights that have a departure delay of at least 60 minutes but made up over 30 minutes in flight, meaning the arrival delay is at least 30 minutes less than the departure delay.
+```{r}
+filter(flights, dep_delay >= 60, dep_delay - arr_delay > 30)
+```
+
 **1.7:** Departed between midnight and 6am (inclusive)
 
+
+This code represents flights that departed between the times "2400" and "600".
+```{r}
+filter(flights, dep_time %% 2400 <= 600)
+```
 
 **2:** Another useful dplyr filtering helper is `between()`. What does it do? Can you use it to simplify the code needed to answer the previous challenges?
 
