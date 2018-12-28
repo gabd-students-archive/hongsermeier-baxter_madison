@@ -566,18 +566,53 @@ FALSE & NA
 ### 5.3 Arrange with `arrange()`
 
 
+This code uses "arrange()" to change the order of the columns.
+```{r}
+arrange(flights, year, month, day)
+```
+
+
+This code uses "(desc)" to reorder a column so that it is in descending order.
+```{r}
+arrange(flights, desc(dep_delay))
+```
+
+
+This code includes missing values. Missing values are still at the end after the data is reordered.
+```{r}
+df <- tibble(x = c(5, 2, NA))
+arrange(df, x)
+arrange(df, desc(x))
+```
+
 #### 5.3 Questions
 
 **1:** How could you use `arrange()` to sort all missing values to the start? (Hint: use is.na()). **Note:** This one should still have the earliest departure dates after the `NA`s. *Hint:* What does `desc()` do?
 
+
+You can use "arrange()" to sort missing values to the start by sorting by (is.na(dep_time)).
+```{r}
+arrange(flights, desc(is.na(dep_time)), dep_time)
+```
 
 **2:** Sort flights to find the most delayed flights. Find the flights that left earliest. 
 
 This question is asking for the flights that were most delayed (left latest after scheduled departure time) and least delayed (left ahead of scheduled time).
 
 
+The following code finds the flights that were most delayed by sorting in descending order of departure delays, so the data will descend from the most delayed to the least delayed. The second portion of the code finds the flights that are the least delayed by using "arrange(flights, dep_delay)" to sort in ascending order of departure delays, so the data will be displayed in order from the least delayed to the most delayed. 
+```{r}
+arrange(flights, desc(dep_delay))
+arrange(flights, dep_delay)
+```
+
 **3:** Sort flights to find the fastest flights. Interpret fastest to mean shortest time in the air.
 
+
+This code finds the fastest flights by using "arrange(flights, air_time)" to arrange the flights in ascending order of air time, so the data displays flights in order of the shortest time to the longest time. 
+```{r}
+arrange(flights, air_time) 
+```
 
 *Optional challenge:* fastest flight could refer to fastest air speed. Speed is measured in miles per hour but time is minutes. Arrange the data by fastest air speed.
 
@@ -585,26 +620,73 @@ This question is asking for the flights that were most delayed (left latest afte
 **4:** Which flights travelled the longest? Which travelled the shortest?
 
 
+This code finds the flights that travelled the longest and the flights that travelled the shortest. "arrange(flights, desc(distance))" finds the flights that travelled the longest by sorting flights in descending order of distance so that the flights are displayed in order of longest distance to shortest distance. "arrange(flights, distance)" finds the flights that travelled the sortest by sorting flights in ascending order of distance so that the flights are displayed in order of shortest distance to longest distance.
+```{r}
+arrange(flights, desc(distance))
+arrange(flights, distance)
+```
+
 ### 5.4 Select columns with `select()`
+
+
+This code selects for a subset of the "flights" data set by using "select()" to select for the desired variables. The first line selects for variables "year", "month", and "day". The second line selects for variables from "year" to "day". The third line selects for all variables except for those from "year" to "day".
+```{r}
+select(flights, year, month, day)
+select(flights, year:day)
+select(flights, -(year:day))
+```
+
+
+This code uses "rename()" to change a variable name from "tailnum" to "tail_num".
+```{r}
+rename(flights, tail_num = tailnum)
+```
+
+
+This code reorganizes the data by using "select()" to select variables to move to the beginning and using "everything()" to move the other variables so that they are displayed after the selected variables.
+```{r}
+select(flights, time_hour, air_time, everything())
+```
 
 #### 5.4 Questions
 
 **1:** Brainstorm as many ways as possible to select `dep_time`, `dep_delay`, `arr_time`, and `arr_delay` from flights. Find at least three ways.
 
 
+This code contains three ways to select the variables "dep_time", "dep_delay", "arr_time", and "arr_delay". In the first line, variables are selected for individually by name. In the second line, variables between "dep_delay" and "arr_time" are selected for using "dep_delay:arr_time". The other variables are selected for individually. In the third line, variables are selected for by column number.
+```{r}
+select(flights, dep_time, dep_delay, arr_time, arr_delay)
+select(flights, dep_time, dep_delay:arr_time, arr_delay)
+select(flights, 4, 6, 7, 9)
+
+```
+
 **2:** What happens if you include the name of a variable multiple times in a `select()` call?
 
 
+If you include the name of a variable multiple times, it is only displayed once. In this code, the variable "year" is included twice but is only displayed once.
+```{r}
+select(flights, year, year)
+```
 
 **3:** What does the `one_of()` function do? Why might it be helpful in conjunction with this vector?
 
 `vars <- c("year", "month", "day", "dep_delay", "arr_delay")`
 
 
+"one_of()" can be used to select for variables stored as a vector. In this code, "select(flights, one_of(vars))" is used to select for variables "year", "month", "day", "dep_delay", and "arr_delay", which are stored as "vars".
+```{r}
+vars <- c("year", "month", "day", "dep_delay", "arr_delay")
+select(flights, one_of(vars))
+```
 
 **4:** Does the result of running the following code surprise you? How do the select helpers deal with case by default? How can you change that default?
 
 `select(flights, contains("TIME"))`
 
 
-
+The result of running the code may be surprising to some because the default behavior is to ignore case. "ignore.case = FALSE" can be used to change the default.
+```{r}
+select(flights, contains("TIME"))
+select(flights, contains("TIME", ignore.case = FALSE))
+```
