@@ -528,13 +528,40 @@ filter(flights, dep_time %% 2400 <= 600)
 **2:** Another useful dplyr filtering helper is `between()`. What does it do? Can you use it to simplify the code needed to answer the previous challenges?
 
 
+"between()" can be used to simplify code that selects for data where "x" falls between specified "y" values. This code uses "between()" and is a simplified version of the code in question 1.4. 
+```{r}
+filter(flights, between(month, 7, 9))
+```
+
 **3:** How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
 
+
+This code represents flights with no listed "dep_time". The code returns 8,255 flights. Other data is missing as well, such as "arr_time". These appear to be flights that never departed and were possibly canceled. 
+```{r}
+filter(flights, is.na(dep_time))
+```
 
 **4:** Why is `NA ^ 0` not missing? Why is `NA | TRUE` not missing? Why is `FALSE & NA` not missing? Can you figure out the general rule? (`NA * 0` is a tricky counterexample!)
 
 **Note:** For some context, see [this thread](https://blog.revolutionanalytics.com/2016/07/understanding-na-in-r.html)
 
+
+NA ^ 0 = 1 because x ^ 0 = 1.
+```{r}
+NA ^ 0
+```
+
+
+"NA | TRUE" is not missing because "NA" could represent either "TRUE" or "FALSE", and in either case, this would return "TRUE". 
+```{r}
+NA | TRUE
+```
+
+
+Similar to the previous code, possible values for "NA" would return "FALSE".
+```{r}
+FALSE & NA
+```
 
 ### 5.3 Arrange with `arrange()`
 
