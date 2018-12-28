@@ -91,12 +91,37 @@ tibble(
 ```
 
 
-This code
+This code creates a tibble for a large data set. "n = 10" is used to specify that only 10 rows are displayed at once, and "width = Inf" is used to specify that all of the columns are displayed at once.
 ```{r}
 nycflights13::flights %>% 
   print(n = 10, width = Inf)
 ```
 
+
+This code creates a tibble that displays the entire data set.
+```{r}
+nycflights13::flights %>% 
+  View()
+```
+
+
+This code selects a single variable from the data. "df$x" and "df[["x"]]" extract by name and "df[[1]]" extracts by position. 
+```{r}
+df <- tibble(
+  x = runif(5),
+  y = rnorm(5)
+)
+df$x
+df[["x"]]
+df[[1]]
+```
+
+
+This code selects a single variable. "." is used as a placeholder.
+```{r}
+df %>% .$x
+df %>% .[["x"]]
+```
 
 ### 10.4: Not required
 
@@ -107,9 +132,27 @@ Answer the questions *completely.* Use code chunks, text, or both, as necessary.
 **1:** How can you tell if an object is a tibble? (Hint: try printing `mtcars`, which is a regular data frame). Identify at least two ways to tell if an object is a tibble. *Hint:* What does `as_tibble()` do? What does `class()` do? What does `str()` do?
 
 
+There are multiple ways to tell if an object is a tibble. "class(mt_cars)" and "str(mt_cars)" both show that mt_cars is a data set, not a tibble.
+```{r}
+mtcars
+```
+
+```{r}
+as_tibble(mtcars)
+```
+
+```{r}
+class(mtcars)
+```
+
+```{r}
+str(mtcars)
+```
 
 **2:** Compare and contrast the following operations on a data.frame and equivalent tibble. What is different? Why might the default data frame behaviours cause you frustration?
 
+
+Some of the default data frame behaviors shown below may cause frustration. For example, with [] operations, data frames sometimes return data frames and sometimes return vectors. However, tibble will always return a tibble in response to a [] operation.
 ```{r}
 df <- data.frame(abc = 1, xyz = "a")
 df$x
@@ -117,6 +160,12 @@ df[, "xyz"]
 df[, c("abc", "xyz")]
 ```
 
+```{r}
+tb <- tibble(abc = 1, xyz = "a")
+tb$x
+tb[, "xyz"]
+tb[, c("abc", "xyz")]
+```
 
 ## Chapter 11: Importing data
 
@@ -126,12 +175,52 @@ Read [R4ds Chapter 11: Data Import](https://r4ds.had.co.nz/data-import.html), se
 
 Nothing to do here unless you took a break and need to reload `tidyverse`.
 
+```{r}
+library("tidyverse")
+```
+
 ### 11.2 Getting started.
 
 Do *not* run the first code chunk of this section, which begins with `heights <- read_csv("data/heights.csv")`. You do not have that data file so the code will not run.
 
 Enter and run the remaining chunks in this section.
 
+
+This code creates a tibble with column specification.
+```{r}
+read_csv("a,b,c
+1,2,3
+4,5,6")
+```
+
+
+This code creates tibbles where several lines are skipped. "skip = 2" specifies that the first 2 lines are skipped, and "skip = #" specifies that lines starting with "#" are skipped.
+```{r}
+read_csv("The first line of metadata
+  The second line of metadata
+  x,y,z
+  1,2,3", skip = 2)
+
+read_csv("# A comment I want to skip
+  x,y,z
+  1,2,3", comment = "#")
+```
+
+
+This code creates a tibble without column names. "col_names = FALSE" specifies that the first row should not be treated as headings.
+```{r}
+read_csv("1,2,3\n4,5,6", col_names = FALSE)
+```
+
+
+This code creates a tibble. The data does not include column names, so "col_names = c("x", "y", "z"))" is used to specify the column names.
+```{r}
+read_csv("1,2,3\n4,5,6", col_names = c("x", "y", "z"))
+```
+
+```{r}
+
+```
 
 #### 11.2 Questions
 
