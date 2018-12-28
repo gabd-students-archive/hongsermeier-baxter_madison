@@ -297,17 +297,58 @@ You do not have to run any of the examples in this section.
 
 Read and run the examples through section 12.3.1 (gathering), including the example with `left_join()`. We'll cover joins later.
 
-```{r}
 
+This code represents a data set where some of the column names are values of a variable.
+```{r}
+table4a
+```
+
+
+This code is a version of the previous code that has been modified to tidy the data set by gathering the columns.
+```{r}
+table4a %>% 
+  gather(`1999`, `2000`, key = "year", value = "cases")
+```
+
+
+This code uses "gather()" to tidy the data set "table4b".
+```{r}
+table4b %>% 
+  gather(`1999`, `2000`, key = "year", value = "population")
+```
+
+
+This code combines the tidied versions of the data sets into one tibble.
+```{r}
+tidy4a <- table4a %>% 
+  gather(`1999`, `2000`, key = "year", value = "cases")
+tidy4b <- table4b %>% 
+  gather(`1999`, `2000`, key = "year", value = "population")
+left_join(tidy4a, tidy4b)
+```
+
+
+This code represents a tibble in which the observations are spread across two rows.
+```{r}
+table2
+```
+
+
+This code is a modified version of the previous code that uses "spread()" to combine observations that were previously spread over two rows into a single row.
+```{r}
+table2 %>%
+    spread(key = type, value = count)
 ```
 
 #### 12.3 Questions
 
 **2:** Why does this code fail? Fix it so it works.
 
+
+The code fails because 1999 and 2000 are non-syntatic names and should be in backticks. The code below has been corrected so that the names are in backticks.
 ```{r}
 table4a %>% 
-  gather(1999, 2000, key = "year", value = "cases")
+  gather(`1999`, `2000`, key = "year", value = "cases")
 #> Error in inds_combine(.vars, ind_list): Position must be between 0 and n
 ```
 
