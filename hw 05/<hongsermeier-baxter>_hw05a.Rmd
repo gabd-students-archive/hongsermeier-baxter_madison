@@ -419,6 +419,54 @@ near(sqrt(2) ^ 2,  2)
 near(1 / 49 * 49, 1)
 ```
 
+
+This code finds flights from November and December.
+```{r}
+filter(flights, month == 11 | month == 12)
+```
+
+
+This is a shorthand version of the previous code. This code selects every row where "x" = a value in "y".
+```{r}
+nov_dec <- filter(flights, month %in% c(11, 12))
+```
+
+
+This code shows two different ways to filter for flights that were not delayed by over 120 minutes.
+```{r}
+filter(flights, !(arr_delay > 120 | dep_delay > 120))
+filter(flights, arr_delay <= 120, dep_delay <= 120)
+```
+
+
+This code represents missing values, which return "NA".
+```{r}
+NA > 5
+10 == NA
+NA + 10
+NA / 2
+```
+
+
+This code shows that if values are unknown, we are unable to know if the values are equal.
+```{r}
+NA == NA
+```
+
+
+This code is used to determine if a value is missing.
+```{r}
+is.na(x)
+```
+
+
+In this code, the first filter excludes "FALSE" and "NA" answers. The second filter preserves "NA" answers by including "is.na(x)" in the filter.
+```{r}
+df <- tibble(x = c(1, NA, 3))
+filter(df, x > 1)
+filter(df, is.na(x) | x > 1)
+```
+
 #### 5.2 Questions
 
 **1.1:** Find all flights with a delay of 2 hours or more.
