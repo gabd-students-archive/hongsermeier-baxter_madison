@@ -365,10 +365,59 @@ Time to [get small.](https://www.youtube.com/watch?v=GOrdzCHnpw4)
 
 Load the necessary libraries. As usual, type the examples into and run the code chunks.
 
+```{r}
+library(nycflights13)
+library(tidyverse)
+```
+
+
+This code represents a tibble of a very large data set.
+```{r}
+flights
+```
+
 ### 5.2: Filter rows with `filter()`
 
 Study Figure 5.1 carefully. Once you learn the `&`, `|`, and `!` logic, you will find them to be very powerful tools.
 
+This code returns a smaller subset of the data set by using "filter()" to select flights on January 1st.
+```{r}
+filter(flights, month == 1, day == 1)
+
+```
+
+
+This code saves the previous result to "jan1"
+```{r}
+jan1 <- filter(flights, month == 1, day == 1)
+```
+
+
+This code both prints and saves the results.
+```{r}
+(dec25 <- filter(flights, month == 12, day == 25))
+
+```
+
+
+This is code that contains an error. "=" should be replaced by "=="
+```{r}
+filter(flights, month = 1)
+```
+
+
+This is also code that contains an error. The could should include "near()"
+```{r}
+sqrt(2) ^ 2 == 2
+1 / 49 * 49 == 1
+```
+
+
+This is the code that has been corrected to include "near()".
+```{r}
+near(sqrt(2) ^ 2,  2)
+near(1 / 49 * 49, 1)
+```
 
 #### 5.2 Questions
 
