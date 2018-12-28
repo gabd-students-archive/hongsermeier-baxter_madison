@@ -218,32 +218,42 @@ This code creates a tibble. The data does not include column names, so "col_name
 read_csv("1,2,3\n4,5,6", col_names = c("x", "y", "z"))
 ```
 
-```{r}
 
+This code creates a tibble that includes a missing value. "na = ." is used to specify the value that is being used to represent the missing value.
+```{r}
+read_csv("a,b,c\n1,2,.", na = ".")
 ```
 
 #### 11.2 Questions
 
 **1:** What function would you use to read a file where fields were separated with "|"?
 
-
+You would use "read_delim()" and "delim = |"
 
 **2:** (This question is modified from the text.) Finish the two lines of `read_delim` code so that the first one would read a comma-separated file and the second would read a tab-separated file. You only need to worry about the delimiter. Do not worry about other arguments. Replace the dots in each line with the rest of your code. 
 
 # Comma-separated
-`file <- read_delim("file.csv", ...)`
-
+`file <- read_delim("file.csv", delim = ",")`
 # Tab-separated
-`file <- read_delim("file.csv", ...)`
-
+`file <- read_delim("file.csv", delim = \t)`
 
 **3:** What are the two most important arguments to `read_fwf()`? Why?
 
+The most important arguments are "col_positions" and "col_types". These arguments are important to properly order the table.
 
 **4:** Skip this question
 
 
 **5: ** Identify what is wrong with each of the following inline CSV files. What happens when you run the code?
+
+In the first file, the header specifies 2 columns instead of 3, causing the third column to be dropped when you run the code.
+In the second file, the header specifies 3 columns, but there are only 2 values in the first row, and there are 4 values in the second row. When you run the code, the first row has a missing value, and one of the values in the second row is dropped.
+In the third file, there is only one value, so when you run the code, there is a missing value in the row.
+In the fourth file, both columns have strings. When you run the code, both columns are treated as character vectors. 
+In the fifth file, values are separated by ";" but they should be separated by ",". When you run the code, there appears to be only one column.
+
+```{r}
+read_csv2("a;b\n1;3")
 
 ```{r}
 read_csv("a,b\n1,2,3\n4,5,6")
@@ -286,6 +296,10 @@ You do not have to run any of the examples in this section.
 ### 12.3
 
 Read and run the examples through section 12.3.1 (gathering), including the example with `left_join()`. We'll cover joins later.
+
+```{r}
+
+```
 
 #### 12.3 Questions
 
