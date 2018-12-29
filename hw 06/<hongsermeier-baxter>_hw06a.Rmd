@@ -1,6 +1,6 @@
 ---
 title: "HW 06 Part 1: Complete the sections"
-author: "your name"
+author: "Madison Hongsermeier-Baxter"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output: html_notebook
 editor_options: 
@@ -27,9 +27,86 @@ Pay careful attention to the useful creation functions in section 5.5.1.
 
 Do not answer any of the questions.
 
+```{r}
+library(tidyverse)
+library(nycflights13)
+```
+
+This code uses "mutate()" to create new columns "gain" and "speed" and add them to displayed data. 
+```{r}
+flights_sml <- select(flights, 
+  year:day, 
+  ends_with("delay"), 
+  distance, 
+  air_time
+)
+mutate(flights_sml,
+  gain = dep_delay - arr_delay,
+  speed = distance / air_time * 60
+)
+```
+
+This code refers to the newly created columns, "gain" and "hours" in order to use "mutate()" and create "gain_per_hour".
+```{r}
+mutate(flights_sml,
+  gain = dep_delay - arr_delay,
+  hours = air_time / 60,
+  gain_per_hour = gain / hours
+)
+```
+
+This code uses "transmute()" in order to display only the newly created columns "gain", "hours", and "gain_per_hour".
+```{r}
+transmute(flights,
+  gain = dep_delay - arr_delay,
+  hours = air_time / 60,
+  gain_per_hour = gain / hours
+)
+```
+
+This code uses "%/%" and "%%" to calculate "hour" and "minute" based on the information "dep_time".
+```{r}
+transmute(flights,
+  dep_time,
+  hour = dep_time %/% 100,
+  minute = dep_time %% 100
+)
+```
+
+This code uses "lag(x)" and "lead(x)" to refer to leading or lagging values of "(x <- 1:10)".
+```{r}
+(x <- 1:10)
+lag(x)
+lead(x)
+```
+
+This code uses "cumsum()" and "cummean()" to find the cumulative sum and cumulative mean of "x".
+```{r}
+x
+cumsum(x)
+cummean(x)
+```
+
+This code uses "min_rank()" to rank data from "y" in a ascending order and "min_rank(desc())" to rank in descending order
+```{r}
+y <- c(1, 2, 2, NA, 3, 4)
+min_rank(y)
+min_rank(desc(y))
+```
+
+This code uses "row_number()", "dense_rank()", "percent_rank()", and "cume_dist()" as various ways to rank data in ascending order.
+```{r}
+row_number(y)
+dense_rank(y)
+percent_rank(y)
+cume_dist(y)
+```
+
 ### Section 5.6: Grouped summaries with `summarise()`
 
 Read and run all of the examples. Pay careful attention to the useful summary functions. Unless you really like baseball, skip the baseball part of 5.6.3.
+
+
 
 ### Section 5.7: Grouped mutates (and filters)
 
