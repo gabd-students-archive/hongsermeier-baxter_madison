@@ -1,0 +1,90 @@
+---
+title: "HW05 Part 2: Import"
+author: Madison Hongsermeier-Baxter
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Limpets
+
+```{r}
+library(tidyverse)
+file_path <- "~/Documents/BI485/hongsermeier-baxter_madison/data"
+dat <- read_csv(file.path(file_path, "limpets.csv"))
+```
+
+```{r}
+dat 
+```
+
+Use the col_types argument. The three column types are numeric, character, and character.
+```{r}
+read_csv(file.path(file_path, "limpets.csv"), col_types = c("ncc"))
+```
+
+Make the Sites column an ordered factor with these levels:
+
+    PBL, KNRM, VBG, WP, PF, DP, SIO, CTZ1, CTZ2, CNM
+```{r}
+sites_ordered <- limpets.csv$Site <- factor(limpets.csv$Site, levels = c("PBL", "KNRM", "VBG", "WP", "PF", "DP", "SIO", "CTZ1", "CTZ2", "CNM"), ordered = TRUE)
+```
+
+```{r}
+sites_ordered
+```
+
+Make a boxplot of length (in millimeters) for each site, colored by protected status.
+```{r}
+ggplot(data = limpets.csv, mapping = aes(x = Site, y = Length, color = Protected)) + 
+  geom_boxplot()
+```
+
+Change the axis labels so they begin with capital letters. The y-axis should include the unit of measurement in parentheses
+```{r}
+ggplot(data = limpets.csv, mapping = aes(x = Site, y = Length, color = Protected)) + 
+  geom_boxplot() +
+  labs(x = "Site", y = "Length (mm)")
+```
+
+The boxplot shows that protected sites tend to have larger limpets. The boxplot also shows that sites "WP" and "DP" have outliers. 
+
+# Roseate Terns
+
+```{r}
+file_path <- "~/Documents/BI485/hongsermeier-baxter_madison/data"
+dat <- read.delim(file.path(file_path, "roseate_terns.txt"))
+```
+
+
+```{r}
+dat
+```
+
+Tidy data
+```{r}
+tidy_roseate <- dat %>% 
+  gather("AR", "AL", "AC", "BR", "BL", "BC", "JR", "JL", "JC", key = "Site", value = "Individuals")
+tidy_roseate
+```
+
+ use filter to remove sites with missing counts
+```{r}
+filter(tidy_roseate, is.na(Individuals) == FALSE)
+```
+
+
+
+
+Seward et al. 2018 studied metapopulation dynamics of roseate terns (Sterna dougallii) in northwestern Europe to determine how abundance changed at nine sites. The number of individuals was counted at each site every year between 1992 and 2016.
+
+    Data: roseate_terns.txt
+    Are the data tidy?
+    use filter to remove sites with missing counts.
+    Make a line plot of population size over time.
+    Change the axis labels as appropriate (you have to start thinking about what is appropriate).
+    Which population(s) obviously increased in size between 1992 and 2016? Which population(s) obviously decreased in size during that time?
+    Some lines have breaks in them. That is, they are not continuous across all years. Why?
+
+
