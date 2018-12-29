@@ -106,7 +106,183 @@ cume_dist(y)
 
 Read and run all of the examples. Pay careful attention to the useful summary functions. Unless you really like baseball, skip the baseball part of 5.6.3.
 
+This code uses "summarise()" to collapse the data frame.
+```{r}
+summarise(flights, delay = mean(dep_delay, na.rm = TRUE))
+```
 
+This code uses "group_by()" to select the portion of the data that will be analyzed. Then, the code uses "summarise()" to find the average value for "delay" for each day of the selected data.
+```{r}
+by_day <- group_by(flights, year, month, day)
+summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
+```
+
+This code uses "group_by()" to group flights by destination. The code then uses "summarise()" to calculate average distances and delays. Then, the code uses "filter()" to filter out unwanted information and plots the data with "ggplot()".
+```{r}
+by_dest <- group_by(flights, dest)
+delay <- summarise(by_dest,
+  count = n(),
+  dist = mean(distance, na.rm = TRUE),
+  delay = mean(arr_delay, na.rm = TRUE)
+)
+delay <- filter(delay, count > 20, dest != "HNL")
+
+
+ggplot(data = delay, mapping = aes(x = dist, y = delay)) +
+  geom_point(aes(size = count), alpha = 1/3) +
+  geom_smooth(se = FALSE)
+```
+
+This code shows a different way to get the same result as the previous code but is written differently. This version of the code uses the pipe instead and is easier to read than the previous version of the code.
+```{r}
+delays <- flights %>% 
+  group_by(dest) %>% 
+  summarise(
+    count = n(),
+    dist = mean(distance, na.rm = TRUE),
+    delay = mean(arr_delay, na.rm = TRUE)
+  ) %>% 
+  filter(count > 20, dest != "HNL")
+```
+
+This code shows what happens when you do not use "na.rm". Now, the code returns many missing values.
+```{r}
+flights %>% 
+  group_by(year, month, day) %>% 
+  summarise(mean = mean(dep_delay))
+```
+
+This code includes "na.rm = TRUE", so missing values are removed before the calculations occur.
+```{r}
+flights %>% 
+  group_by(year, month, day) %>% 
+  summarise(mean = mean(dep_delay, na.rm = TRUE))
+```
+
+This code creates and saves a data set with no cancelled flights to avoid missing values.
+```{r}
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay), !is.na(arr_delay))
+
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(mean = mean(dep_delay))
+```
+
+This code groups by "tailnum" and uses "summarise()" to calculate the average value for "delay". The data is plotted using "ggplot()".
+```{r}
+delays <- not_cancelled %>% 
+  group_by(tailnum) %>% 
+  summarise(
+    delay = mean(arr_delay)
+  )
+
+ggplot(data = delays, mapping = aes(x = delay)) + 
+  geom_freqpoly(binwidth = 10)
+```
+
+This code creates a scatter plot of number of flights vs. average delay. As would be expected, the decrease in smalpe size leads to an increase in variation.
+```{r}
+delays <- not_cancelled %>% 
+  group_by(tailnum) %>% 
+  summarise(
+    delay = mean(arr_delay, na.rm = TRUE),
+    n = n()
+  )
+
+ggplot(data = delays, mapping = aes(x = n, y = delay)) + 
+  geom_point(alpha = 1/10)
+```
+
+This code filters out the groups with the smallest numbers of observations in order to more clearly display any patterns present. 
+```{r}
+delays %>% 
+  filter(n > 25) %>% 
+  ggplot(mapping = aes(x = n, y = delay)) + 
+    geom_point(alpha = 1/10)
+```
+
+```{r}
+install.packages("Lahman", repos="http://R-Forge.R-project.org")
+```
+
+This code uses "group()" and "summarise()" to gather data about the variables "ab" and "ba" from the players. The code creates a plot of "ba" vs "ab", which shows a positive correlation between the two variables.
+```{r}
+batting <- as_tibble(Lahman::Batting)
+
+batters <- batting %>% 
+  group_by(playerID) %>% 
+  summarise(
+    ba = sum(H, na.rm = TRUE) / sum(AB, na.rm = TRUE),
+    ab = sum(AB, na.rm = TRUE)
+  )
+
+batters %>% 
+  filter(ab > 100) %>% 
+  ggplot(mapping = aes(x = ab, y = ba)) +
+    geom_point() + 
+    geom_smooth(se = FALSE)
+```
+
+This code orders batters based on descending order of the variable "ba".
+```{r}
+batters %>% 
+  arrange(desc(ba))
+```
+
+This code uses "summarise()" to calculate the mean "arr_delay" and the mean positive "arr_delay".
+```{r}
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(
+    avg_delay1 = mean(arr_delay),
+    avg_delay2 = mean(arr_delay[arr_delay > 0])
+  )
+```
+
+This code uses "summarise()" to calculate the standard deviation of "distance". The code stores this data as "distance_sd" and uses "arrange()" to sort the data in descending order of "distance_sd".
+```{r}
+not_cancelled %>% 
+  group_by(dest) %>% 
+  summarise(distance_sd = sd(distance)) %>% 
+  arrange(desc(distance_sd))
+```
+
+This code uses "summarise()" along with "min()" and "max()" to calculate the minmum and maximum values of "dep_time" for each day and store and display the results as variables "first" and "last".
+```{r}
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(
+    first = min(dep_time),
+    last = max(dep_time)
+  )
+```
+
+This code uses "first()" and "last()" to find the first and last values of "dep_time" for each day. This data is stored and displayed as the variables "first" and "last".
+```{r}
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(
+    first_dep = first(dep_time), 
+    last_dep = last(dep_time)
+  )
+```
+
+This code uses "mutate()" to create the new variable "r". The code uses "filter()" to filter the data according to the variable "r".
+```{r}
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  mutate(r = min_rank(desc(dep_time))) %>% 
+  filter(r %in% range(r))
+```
+
+This code uses "summarise()" to create the new variable "carriers", which represents distinct values of the variable "carrier".
+```{r}
+not_cancelled %>% 
+  group_by(dest) %>% 
+  summarise(carriers = n_distinct(carrier)) %>% 
+  arrange(desc(carriers))
+```
 
 ### Section 5.7: Grouped mutates (and filters)
 
