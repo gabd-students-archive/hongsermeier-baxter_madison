@@ -117,15 +117,53 @@ ggplot(data = abalone1, mapping = aes(x = Rings, y = Height)) +
 Based on the graph, are the extraordinarily large individuals really old individuals?
 No, based on the graphs, the outliers for size are not some of the older individuals according to the rings, an indicator of age.
 
+Filter the data to remove the two large individuals
 ```{r}
-
+abalone2 <- filter(abalone1, Height < 0.3)
+abalone2
 ```
 
+Change Type to an ordered factor
+```{r}
+abalone_type <- abalone2$Type <- factor(abalone2$Type, levels = c("I", "F", "M"), ordered = TRUE)
+sites_ordered
+```
 
-Chunk 3: Let’s assume the outliers are coding errors so remove them by filtering. Filter the data to remove the two large individuals. Change Type to an ordered factor. Immatures must be first, as that makes sense in terms of age. The order of female and male after immature is up to you. Then, redo the scatterplot that you just made with the newly wrangled data.
+redo the scatterplot that you just made with the newly wrangled data
+```{r}
+ggplot(data = abalone2, mapping = aes(x = Rings, y = Height)) + 
+  geom_point() +
+  facet_wrap(~ Type, nrow = 2)
+```
 
 What patterns emerge? Which type is the largest? Are all females and males larger than immatures?
 
-Chunk 4: Are there really immatures with more than five rings with zero height? Srsly? - Print the records of the individuals with zero height. - Most likely, the two zero height values are mistakes made during data recording. This time, instead of filtering them, assign NA (missing data) to those two records. Repolot the data to ensure the two observations are not included in the graph.
+In general, females and males are larger than immatures, but there is a lot of overlap in size. 
 
-Chunk 5: Make two scatterplots of your choice, between any two pairs of continuous variables that make sense to show as scatterplots. Color, shape, or both should distinguish the three types.
+Print the records of the individuals with zero height
+```{r}
+filter(abalone2, Height == 0)
+```
+
+assign NA (missing data) to those two records
+```{r}
+abalone2[abalone2 == 0] <- NA
+```
+
+Repolot the data to ensure the two observations are not included in the graph.
+```{r}
+abalone3 <- filter(abalone2, is.na(Height) == FALSE)
+```
+
+Make two scatterplots of your choice, between any two pairs of continuous variables that make sense to show as scatterplots. Color, shape, or both should distinguish the three types.
+
+```{r}
+ggplot(data = abalone3, mapping = aes(x = Diameter, y = Height, color = Type)) + 
+  geom_point()
+```
+
+```{r}
+ggplot(data = abalone3, mapping = aes(x = LongestShell, y = ShellWeight, color = Type)) + 
+  geom_point()
+```
+
