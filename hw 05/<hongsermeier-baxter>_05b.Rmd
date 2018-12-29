@@ -85,6 +85,81 @@ Which population(s) obviously increased in size between 1992 and 2016? Which pop
 
 The population at site "AR" most obviously increased during the time period. There also seem to be more slight increases in population at the sites "AC", "AL", "BC", and "JC". There were decreases at sites "BR" and "JR". Some lines have breaks in them due to missing values in the data.
 
+# darters 
+
+```{r}
+file_path <- "~/Documents/BI485/hongsermeier-baxter_madison/data"
+dat <- read.delim(file.path(file_path, "darters.txt"))
+```
+
+```{r}
+start_pos <- c(1, 4, 15, 16, 17, 18, 21, 25, 29, 33, 36, 39, 40)
+stop_pos <- c(3, 14, 15, 16, 17, 20, 24, 28, 32, 35, 38, 40, 41)
+names <- c("specimen id", "species", "riffle", "age", "sex", "length", "depth", "velocity", "temperature", "majsub", "minsub", "majtype", "mintype")
+darters <- read_fwf(file.path(file_path, "darters.txt"), fwf_positions(start_pos, stop_pos, col_names = names), skip = 15)
+```
+
+```{r}
+darters
+```
+
+ Make riffle an unordered factor with levels 1 and 2.
+```{r}
+darters_riffle <- darters$riffle <- factor(darters$riffle, levels = c("1", "2"), ordered = FALSE)
+```
+
+Make major_type an ordered factor with levels s, fg, sg, lg, c
+```{r}
+darters_majtype <- darters$majtype <- factor(darters$majtype, levels = c("s", "fg", "sg", "lg", "c"), ordered = TRUE)
+```
+
+    Filter to remove rows with “zonale” and “tetrazonum”.
+```{r}
+darters2 <- darters %>%
+  filter(!species %in% c("zonale", "tetrazonum"))
+darters2
+```
+
+Remove mintype and minsub columns.
+```{r}
+darters3 <- subset(darters2, select = -c(mintype,minsub) )
+darters3
+```
+
+Rename majsub and majtype to major_substrate and major_type, respectively.
+```{r}
+colnames(darters3)[colnames(darters3)=="majsub"] <- "major_substrate"
+colnames(darters3)[colnames(darters3)=="majtype"] <- "major_type"
+darters3
+```
+
+Data were collected from two riffles, separated by several hundred meters. The plots below explore differences between riffles. Use facet_wrap() to make pairs of plots separated by riffle.
+Plot 1 Plot length as a function of depth. Map species to color and shape. What differences do you see between the two riffles?
+
+Riffle 2 has higher length values. Riffle 1 has higher depth values. Riffle 2 has more blennioides.
+```{r}
+ggplot(data = darters3, mapping = aes(x = length, y = depth, color = species, shape = species)) + 
+  geom_point() +
+  facet_wrap(~ riffle, nrow = 2)
+  
+```
+
+
+Plot 2: Make a boxplot of length for each of the three species. Which riffle shows the greatest number of outliers?
+
+Riffle 2 has more outliers.
+```{r}
+ggplot(data = darters3, mapping = aes(x = species, y = length)) + 
+  geom_boxplot() +
+  facet_wrap(~ riffle, nrow = 2)
+```
+
+Plot 3: Make a boxplot of length for major substrate types for each species for each riffle. This will actually be six plots in one! To do this, use facet_grid(species ~ riffle) in place of facet_wrap(). How does the plot change if you switch the order of the argument (riffle ~ species) in the facet_grid() function?
+
+```{r}
+
+```
+
 # abalone 
 
 ```{r}
@@ -126,7 +201,7 @@ abalone2
 Change Type to an ordered factor
 ```{r}
 abalone_type <- abalone2$Type <- factor(abalone2$Type, levels = c("I", "F", "M"), ordered = TRUE)
-sites_ordered
+
 ```
 
 redo the scatterplot that you just made with the newly wrangled data
