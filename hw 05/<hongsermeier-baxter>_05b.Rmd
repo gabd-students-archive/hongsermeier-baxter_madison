@@ -74,17 +74,58 @@ tidy_roseate
 filter(tidy_roseate, is.na(Individuals) == FALSE)
 ```
 
+Make a line plot of population size over time.
+```{r}
+ggplot(data = tidy_roseate, mapping = aes(x = year, y = Individuals)) + 
+  geom_line() +
+  facet_wrap(~ Site, nrow = 2)
+```
+
+Which population(s) obviously increased in size between 1992 and 2016? Which population(s) obviously decreased in size during that time? Some lines have breaks in them. That is, they are not continuous across all years. Why?
+
+The population at site "AR" most obviously increased during the time period. There also seem to be more slight increases in population at the sites "AC", "AL", "BC", and "JC". There were decreases at sites "BR" and "JR". Some lines have breaks in them due to missing values in the data.
+
+# abalone 
+
+```{r}
+file_path <- "~/Documents/BI485/hongsermeier-baxter_madison/data"
+abalone <- read_csv(file.path(file_path, "abalone.csv"))
+```
+
+```{r}
+abalone
+```
+
+remove the first column
+```{r}
+abalone1 <- select(abalone, 2:10)
+abalone1
+```
+
+make a boxplot of height differences among the three types
+```{r}
+ggplot(data = abalone1, mapping = aes(x = Type, y = Height)) + 
+  geom_boxplot() 
+```
+
+Make a scatterplot to see if height appears to correlate with rings
+```{r}
+ggplot(data = abalone1, mapping = aes(x = Rings, y = Height)) + 
+  geom_point() 
+```
+
+Based on the graph, are the extraordinarily large individuals really old individuals?
+No, based on the graphs, the outliers for size are not some of the older individuals according to the rings, an indicator of age.
+
+```{r}
+
+```
 
 
+Chunk 3: Let’s assume the outliers are coding errors so remove them by filtering. Filter the data to remove the two large individuals. Change Type to an ordered factor. Immatures must be first, as that makes sense in terms of age. The order of female and male after immature is up to you. Then, redo the scatterplot that you just made with the newly wrangled data.
 
-Seward et al. 2018 studied metapopulation dynamics of roseate terns (Sterna dougallii) in northwestern Europe to determine how abundance changed at nine sites. The number of individuals was counted at each site every year between 1992 and 2016.
+What patterns emerge? Which type is the largest? Are all females and males larger than immatures?
 
-    Data: roseate_terns.txt
-    Are the data tidy?
-    use filter to remove sites with missing counts.
-    Make a line plot of population size over time.
-    Change the axis labels as appropriate (you have to start thinking about what is appropriate).
-    Which population(s) obviously increased in size between 1992 and 2016? Which population(s) obviously decreased in size during that time?
-    Some lines have breaks in them. That is, they are not continuous across all years. Why?
+Chunk 4: Are there really immatures with more than five rings with zero height? Srsly? - Print the records of the individuals with zero height. - Most likely, the two zero height values are mistakes made during data recording. This time, instead of filtering them, assign NA (missing data) to those two records. Repolot the data to ensure the two observations are not included in the graph.
 
-
+Chunk 5: Make two scatterplots of your choice, between any two pairs of continuous variables that make sense to show as scatterplots. Color, shape, or both should distinguish the three types.
