@@ -219,17 +219,99 @@ ggplot(data = darters2, mapping = aes(x = species, y = length)) +
   labs(y = "Length (mm)", x = "Species")
 ```
 
+# feathers
 
 
-You probably noticed that the location of the median is not centered between the minimum and maximum values, even though the median is the middle value.
 
-You decide that you could display the data more effectively. You want to show the individual measurements and emphasize the mean over the median. You also decide you want to try a slightly different way of graphing the data.
+Use the locale = locale(<argument>) argument in the read_csv() function to specify the decimal mark.
+```{r}
+names <- c("capture_date", "day", "site", "urban_score", "cortF", "cortB", "sex", "smi", "tarsus", "mass", "basal_cort", "stress_cort")
+file_path <- "~/Documents/BI485/hongsermeier-baxter_madison/data"
+feathers <- read_csv(file.path(file_path, "feathers.csv"), locale = locale(decimal_mark = "."), skip = 1, col_names = names)
+```
 
-    Make a new plot with a geom_point() layer of length for each species. Change the point color to a lighter shade in the range of gray50 to gray70. The points should contrast against the overall gray background but they are not the main point of the graph.
-    Add a stat_summary() layer with these arguments:
-        fun.y = median
-        geom = "point"
-        size = 2.2
-    Add another stat_summary(). Change the y function to mean, size to 3, and add the color = "15"maroon" argument.
-    Facet, label, and flip the graph as you did above.
+```{r}
+feathers
+```
+
+
+
+
+Wrangle data
+
+The authors use an index called the “scaled mass index” (SMI), included as a column. However, you will use R to recreate that value. The equation to calculate SMI for each individual (i
+
+) is,
+
+SMIi=Mi×(L0/Li)b,
+
+where L0
+is the mean tarsus length of all birds in the sample, Mi and Li are the mass and tarsus1 length of each individual, and b
+
+is the slope estimate of the standardized major axis regression on the log-transformed mass and log-transformed tarsus length.
+
+Fortunately, you do not need to know the details of the analysis. You can get the values you need with a few easy steps. Let’s first get b,
+
+the slope of the regression.
+
+    Calculate the mean tarsus length of all individuals in the data set, and store it in av ariable called mean_tarsus. You should know how to calculate the mean of all values in a column.
+    Use mutate() to log-transform (log()) the body mass (mass) and the tarsus length (tarsus). Save these in new columns as log_mass and log_tarsus, respectively.
+    Run the following function major_axis <- sma(log_mass ~ log_tarsus, data = <data>). Substitute the name of your imported data for <data>. The sma() function calculates the standardized major axis regression.
+    Apply the summary() funciton to major_axis.
+        The value you want for b
+
+        is the slope of the estimate.
+    Apply the coef() function to major_axis. The output is a named numeric vector with two elements. The value you want is the second element. Store that value in the variable b.
+
+At this point, you now have the information you need to calculate “SMI” for each bird. L0
+= mean_tarsus, b = b, and Mi and Li
+
+are the mass and tarsus columns. Note: Do not use the log-transformed values for this calculation.
+
+    Use mutate to calculate SMI and store the values in a new column called new_smi. Compare your new column with the column you imported. Your values should be nearly identical, differing by no more than 0.1. Hint (optional): Use the select() function of dplyr to rearrange your columns so that smi and new_smi are side by side. Or, print them out together. Note: If your numbers are not correct, figure out where you made a mistake and correct it.
+
+Summarie data
+
+Next, summarize the basal and stress corticosterone data.
+
+    Group by site, and calculate the mean and standard error of the mean (SEY)
+
+    for basal_cort and stress_cort. Standard error of the mean is calculated as,
+
+SEY=sn‾√,
+
+where s
+is the standard deviation and n
+
+is the number of individuals. You can calculate the standard deviation in R with the sd() function. Do not forgot to include na.rm = TRUE in the arguments for mean() and sd(), as shown in the text.
+Graph data
+
+Plot 1
+
+    Make a boxplot of new_smi for each site. Do you see any clear differences among the four sites?
+
+Plot 2 A common graph is to plot the means with error bars based on the standard errors of the means.
+
+    Make a plot of the basal corticosterone concentration (ng/ml) for each site. Use geom_point(). Add a geom_errorbar() layer. Use the ? function and the interwebs if you need, but here are a few hints:
+        x should be the sites,
+        geom_errorbar() needs ymin and ymax to draw the lower and upper ends of the error bars. Here, ymin should be one standard error below the mean and ymax should be one standard error above the mean. How could you do that? Good. Now do it.
+
+Plot 3
+
+I am not a fan of the Star Wars Tie Fighter look of the default error bars. The horizontal lines do not add any information about the data. In other words, they decrease the data-ink ratio.
+
+Repeat the above plot but with two differences. Use the mean_stress and its standard error, and use geom_linerange() instead of geom_errorbar. Linerange and errorbar use the same arguments.
+Graduate and Honors students
+
+You must modify one of the above graphs with the following requirements:
+
+    use size of 3 for the point located at the mean,
+    color the point maroon,
+    place the error bars behind the points so that a black line does not cur across the face of each point.
+    Assume you like the Tie Fighter look but you do not want them so exaggerated. Size them to something much smaller but still present. The exact size depends on your tastes. Note: I encourage undergrads to attempt this but this does not count for or against your grade.
+
+et Vóila
+
+    The tarsus looks like part of the bird’s leg but is homologous to the tarsal bones in the vertebrate foot.↩
+
 
