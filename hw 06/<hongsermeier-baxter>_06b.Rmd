@@ -51,20 +51,29 @@ mutate(darters2,
 
 Change the riffle values of 1 and 2 to Riffle 1 and Riffle 2.
 ```{r}
-
+darters2$riffle[darters2$riffle==1] <- "Riffle_1"
+darters2$riffle[darters2$riffle==2] <- "Riffle_2"
+darters2
 ```
 
 Change the length data from centimeters to millimeters. It is more common to use mm for small fishes.
 ```{r}
+darters2 <- mutate(darters2,
+       length = length * 10)
+```
 
+```{r}
+darters2
 ```
 
 Change the sex values of f and m to Female and Male.
 ```{r}
-
+darters2$sex[darters2$sex=="f"] <- "Female"
+darters2$sex[darters2$sex=="m"] <- "Male"
+darters2
 ```
 
-Use group_by() and summarize() to summarize the mean length, depth, and velocity for each species for each riffle. Use facet_wrap on riffles like you did in the last assignment.
+
 
 
 
