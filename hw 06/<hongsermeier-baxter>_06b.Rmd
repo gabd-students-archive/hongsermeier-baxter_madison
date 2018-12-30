@@ -144,8 +144,82 @@ How does the relationship of the median, mean, and range change between the two 
 
 
 
-
 Plot 2
+
+Make a new plot with a geom_point() layer of length for each species
+```{r}
+ggplot(data = darters2, mapping = aes(x = species, y = length)) + 
+  geom_point()
+```
+
+Change the point color to a lighter shade in the range of gray50 to gray70
+```{r}
+ggplot(data = darters2, mapping = aes(x = species, y = length)) + 
+  geom_point(color = "gray50")
+```
+
+Add a stat_summary() layer with these arguments:
+        fun.y = median
+        geom = "point"
+        size = 2.2
+```{r}
+ggplot(data = darters2, mapping = aes(x = species, y = length)) + 
+  geom_point(color = "gray50") +
+  stat_summary(
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median,
+    geom = "point",
+    size = 2.2
+  ) 
+```
+
+ Add another stat_summary(). Change the y function to mean, size to 3, and add the color = "15"maroon" argument.
+```{r}
+ggplot(data = darters2, mapping = aes(x = species, y = length)) + 
+  geom_point(color = "gray50") +
+  stat_summary(
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median,
+    geom = "point",
+    size = 2.2
+  ) +
+  stat_summary(
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = mean,
+    size = 3,
+    geom = "point",
+    color = "maroon"
+  )
+```
+ 
+Facet, label, and flip the graph as you did above
+```{r}
+ggplot(data = darters2, mapping = aes(x = species, y = length)) + 
+  geom_point(color = "gray50") +
+  stat_summary(
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median,
+    geom = "point",
+    size = 2.2
+  ) +
+  stat_summary(
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = mean,
+    size = 3,
+    geom = "point",
+    color = "maroon"
+  ) +
+  coord_flip() +
+  facet_wrap(~ riffle, nrow = 2) +
+  labs(y = "Length (mm)", x = "Species")
+```
+
+
 
 You probably noticed that the location of the median is not centered between the minimum and maximum values, even though the median is the middle value.
 
