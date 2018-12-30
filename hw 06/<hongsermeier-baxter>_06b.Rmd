@@ -234,41 +234,51 @@ feathers <- read_csv(file.path(file_path, "feathers.csv"), locale = locale(decim
 feathers
 ```
 
+Calculate the mean tarsus length of all individuals in the data set, and store it in a variable called mean_tarsus. You should know how to calculate the mean of all values in a column.
+```{r}
+mean_tarsus <- mean(feathers[["tarsus"]])
+mean_tarsus
+```
+
+ Use mutate() to log-transform (log()) the body mass (mass) and the tarsus length (tarsus). Save these in new columns as log_mass and log_tarsus, respectively.
+```{r}
+feathers <- mutate(feathers,
+  log_mass = log(mass),
+  log_tarsus = log(tarsus)
+)
+```
+ 
+  Run the following function major_axis <- sma(log_mass ~ log_tarsus, data = <data>). Substitute the name of your imported data for <data>. The sma() function calculates the standardized major axis regression.
+```{r}
+major_axis <- sma(log_mass ~ log_tarsus, data = feathers)
+```
+
+Apply the summary() funciton to major_axis.
+        The value you want for b is the slope of the estimate.
+```{r}
+summary(major_axis)
+```
+
+Apply the coef() function to major_axis. The output is a named numeric vector with two elements. The value you want is the second element. Store that value in the variable b.
+```{r}
+coef(major_axis)
+```
+
+```{r}
+b <- 1.864889
+```
+
+    Use mutate to calculate SMI and store the values in a new column called new_smi. Compare your new column with the column you imported. Your values should be nearly identical, differing by no more than 0.1.
+```{r}
+feathers <- mutate(feathers,
+  new_smi = mass * (mean_tarsus / tarsus) ^ b
+)
+feathers
+```
+    
+    
 
 
-
-Wrangle data
-
-The authors use an index called the “scaled mass index” (SMI), included as a column. However, you will use R to recreate that value. The equation to calculate SMI for each individual (i
-
-) is,
-
-SMIi=Mi×(L0/Li)b,
-
-where L0
-is the mean tarsus length of all birds in the sample, Mi and Li are the mass and tarsus1 length of each individual, and b
-
-is the slope estimate of the standardized major axis regression on the log-transformed mass and log-transformed tarsus length.
-
-Fortunately, you do not need to know the details of the analysis. You can get the values you need with a few easy steps. Let’s first get b,
-
-the slope of the regression.
-
-    Calculate the mean tarsus length of all individuals in the data set, and store it in av ariable called mean_tarsus. You should know how to calculate the mean of all values in a column.
-    Use mutate() to log-transform (log()) the body mass (mass) and the tarsus length (tarsus). Save these in new columns as log_mass and log_tarsus, respectively.
-    Run the following function major_axis <- sma(log_mass ~ log_tarsus, data = <data>). Substitute the name of your imported data for <data>. The sma() function calculates the standardized major axis regression.
-    Apply the summary() funciton to major_axis.
-        The value you want for b
-
-        is the slope of the estimate.
-    Apply the coef() function to major_axis. The output is a named numeric vector with two elements. The value you want is the second element. Store that value in the variable b.
-
-At this point, you now have the information you need to calculate “SMI” for each bird. L0
-= mean_tarsus, b = b, and Mi and Li
-
-are the mass and tarsus columns. Note: Do not use the log-transformed values for this calculation.
-
-    Use mutate to calculate SMI and store the values in a new column called new_smi. Compare your new column with the column you imported. Your values should be nearly identical, differing by no more than 0.1. Hint (optional): Use the select() function of dplyr to rearrange your columns so that smi and new_smi are side by side. Or, print them out together. Note: If your numbers are not correct, figure out where you made a mistake and correct it.
 
 Summarie data
 
