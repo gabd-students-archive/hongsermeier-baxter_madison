@@ -73,49 +73,77 @@ darters2$sex[darters2$sex=="m"] <- "Male"
 darters2
 ```
 
+Use group_by() and summarize() to summarize the mean length, depth, and velocity for each species for each riffle. Make a table with the summary means.
 
-
-
-
-
-    
-   
-
-The substrate was measured at each trap site. The relative proportion of the two most commmon substrate types (sand, fine gravel, small gravel, large gravel, and cobble) was estimated. The relative abundance of the most abundant substrate type was recorded as majsub. The less abundant substrate type was recorded as minsub. Together, majsub + minsub = 1. If they do not sum to 1, then there was a data recording error.
-
-    Use mutate() to perform these wrangling tasks
-        Sum together the majsub and minsub into a new column called total_substrate. Does total_substrate sum to 1 for all observations?
-        Change the riffle values of 1 and 2 to Riffle 1 and Riffle 2.
-        Change the length data from centimeters to millimeters. It is more common to use mm for small fishes.
-        Change the sex values of f and m to Female and Male.
-    Only total_substrate needs a new column. The other changes should use their own columns.
-
-Summarize data
-
-Use group_by() and summarize() to summarize the mean length, depth, and velocity for each species for each riffle. Save this summary to a different object than the original data. You will need both in the following plot. Use facet_wrap on riffles like you did in the last assignment.
-Table results
-
-    Use Make a table with the summary means.
-
-Graph data
+```{r}
+darters_means <- darters2 %>% group_by(species) %>%
+  summarise_at(.vars = vars(length, depth, velocity), 
+               .funs = c(mean = "mean")) 
+darters_means
+```
 
 Plot 1
+Make a plot that uses the stat_summary() technique but use x = species and y = length. Add a geom_point() layer to add the mean length of each species to the plot. Use a filled square shape. You will have to use the summarized data set to get the mean for this geom.
 
-    Make a plot that uses the stat_summary() technique shown in R4ds section 3.7, reason 3 (scroll down, just before 3.7.1 Exercises) but use x = species and y = length.
+```{r}
+ggplot(data = darters2) +
+  stat_summary(
+    mapping = aes(x = species, y = length),
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median
+  ) +
+  geom_point(data=darters_means, mapping = aes(x = species, y = length_mean), shape = 15)
+```
 
-    This will plot a point to show the median length, and draw a line from the shortest (min) to the longest (max) length to show the range of lengths for each species.
+Turn the plot so that the species are listed on the left axis and length on bottom axis
+```{r}
+ggplot(data = darters2) +
+  stat_summary(
+    mapping = aes(x = species, y = length),
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median
+  ) +
+  geom_point(data=darters_means, mapping = aes(x = species, y = length_mean), shape = 15) +
+  coord_flip()
+```
 
-    Remember that ggplot2 uses a “layered grammar of graphics.” Add a geom_point() layer to add the mean length of each species to the plot. Use a filled square shape. You will have to use the summarized data set to get the mean for this geom.
+Add facet_wrap() to separate the two riffles.
+```{r}
+ggplot(data = darters2) +
+  stat_summary(
+    mapping = aes(x = species, y = length),
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median
+  ) +
+  geom_point(data=darters_means, mapping = aes(x = species, y = length_mean), shape = 15) +
+  coord_flip() +
+  facet_wrap(~ riffle, nrow = 2)
+```
 
-Note: If you do not get a point in the next plot showing the mean for E. blennioides, then you did something wrong. What was it?
-
-    Turn the plot so that the species are listed on the left axis and length on bottom axis.
-
-    Add facet_wrap() to separate the two riffles.
-
-    Add labs() so that length includes the appropriate unit of measurement in parentheses and that the species axis is not labeled (x = NULL).
+Add labs() so that length includes the appropriate unit of measurement in parentheses and that the species axis is not labeled (x = NULL).
+```{r}
+ggplot(data = darters2) +
+  stat_summary(
+    mapping = aes(x = species, y = length),
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median
+  ) +
+  geom_point(data=darters_means, mapping = aes(x = species, y = length_mean), shape = 15) +
+  coord_flip() +
+  facet_wrap(~ riffle, nrow = 2) +
+  labs(y = "Length (mm)", x = "Species")
+```
 
 How does the relationship of the median, mean, and range change between the two riffles? In other words, how does the size distribution change between the two riffles?
+
+"Spectabile" has a similar range in both riffles, but a lower median in riffle 2. "Caeruleum" has a smaller range and lower median in riffle 2. "Blennioides" has a much larger range in riffle 2 and a slightly lower median. The mean is similar between rifles for all species.
+
+
+
 
 Plot 2
 
