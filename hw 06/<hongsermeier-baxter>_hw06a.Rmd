@@ -276,7 +276,7 @@ not_cancelled %>%
   filter(r %in% range(r))
 ```
 
-This code uses "summarise()" to create the new variable "carriers", which represents distinct values of the variable "carrier".
+This code uses "summarise()" to create the new variable "carriers", which represents distinct values of the variable "carrier". The code uses "arrange()" to organize the data in descending order of the variable "carriers".
 ```{r}
 not_cancelled %>% 
   group_by(dest) %>% 
@@ -284,7 +284,50 @@ not_cancelled %>%
   arrange(desc(carriers))
 ```
 
+This code provides a count of the variable "dest".
+```{r}
+not_cancelled %>% 
+  count(dest)
+```
+
+This code uses "count()" to provide a sum of the miles a plane flew.
+```{r}
+not_cancelled %>% 
+  count(tailnum, wt = distance)
+```
+
+This code uses "summarise()" to create a new variables called "n_early" and "hour_perc".
+```{r}
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(n_early = sum(dep_time < 500))
+
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(hour_perc = mean(arr_delay > 60))
+```
+
+This code uses "summarise()" multiple times to progressively focus on a larger "group_by()" categories.
+```{r}
+daily <- group_by(flights, year, month, day)
+(per_day   <- summarise(daily, flights = n()))
+
+(per_month <- summarise(per_day, flights = sum(flights)))
+
+(per_year  <- summarise(per_month, flights = sum(flights)))
+```
+
+This code uses "ungroup()" to remove grouping.
+```{r}
+daily %>% 
+  ungroup() %>%       
+  summarise(flights = n())
+```
+
 ### Section 5.7: Grouped mutates (and filters)
+```{r}
+
+```
 
 Read and run all of the examples.
 
