@@ -49,9 +49,22 @@ mutate(darters2,
 )
 ```
 
+Change the riffle values of 1 and 2 to Riffle 1 and Riffle 2.
+```{r}
 
+```
 
+Change the length data from centimeters to millimeters. It is more common to use mm for small fishes.
+```{r}
 
+```
+
+Change the sex values of f and m to Female and Male.
+```{r}
+
+```
+
+Use group_by() and summarize() to summarize the mean length, depth, and velocity for each species for each riffle. Use facet_wrap on riffles like you did in the last assignment.
 
 
 
