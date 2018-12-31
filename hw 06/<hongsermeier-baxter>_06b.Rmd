@@ -284,14 +284,12 @@ feathers %>%
 
 calculate the mean and standard error of the mean (SEY) for basal_cort and stress_cort
 ```{r}
-mean_basal_cort <- mean(feathers$basal_cort)
-mean_stress_cort <- mean(feathers$stress_cort)
+mean_basal_cort <- mean(feathers$basal_cort, na.rm = TRUE)
+mean_stress_cort <- mean(feathers$stress_cort, na.rm = TRUE)
 sd_basal_cort <- sd(feathers$basal_cort, na.rm = TRUE)
 sd_stress_cort <- sd(feathers$stress_cort, na.rm = TRUE)
 se_basal_cort <- sd_basal_cort/(sqrt(43))
 se_stress_cort <- sd_stress_cort/(sqrt(43))
-se_basal_cort
-se_stress_cort
 ```
 
 Plot 1
@@ -305,36 +303,28 @@ ggplot(data = feathers, mapping = aes(x = new_smi, y = site)) +
 
 Plot 2 A common graph is to plot the means with error bars based on the standard errors of the means.
 ```{r}
-ggplot(data = feathers, mapping = aes(x = basal_cort, y = site)) + 
-  geom_point() +
-  geom_errorbar(ymin = , ymax = )
+min_basal_cort <- mean_basal_cort - se_basal_cort
+max_basal_cort <- mean_basal_cort + se_basal_cort
+min_basal_cort 
+max_basal_cort
 ```
 
 ```{r}
-mean_basal_cort
-se_basal_cort
+ggplot(data = feathers, mapping = aes(x = site, y = basal_cort)) + 
+  geom_point() +
+  geom_errorbar(ymin = min_basal_cort, ymax = max_basal_cort)
 ```
 
-    Make a plot of the basal corticosterone concentration (ng/ml) for each site. Use geom_point(). Add a geom_errorbar() layer. Use the ? function and the interwebs if you need, but here are a few hints:
-        x should be the sites,
-        geom_errorbar() needs ymin and ymax to draw the lower and upper ends of the error bars. Here, ymin should be one standard error below the mean and ymax should be one standard error above the mean. How could you do that? Good. Now do it.
+Repeat the above plot but with two differences. Use the mean_stress and its standard error, and use geom_linerange() instead of geom_errorbar
+```{r}
+min_stress_cort <- mean_stress_cort - se_stress_cort
+max_stress_cort <- mean_stress_cort + se_stress_cort
+min_stress_cort 
+max_stress_cort
+```
 
-Plot 3
-
-I am not a fan of the Star Wars Tie Fighter look of the default error bars. The horizontal lines do not add any information about the data. In other words, they decrease the data-ink ratio.
-
-Repeat the above plot but with two differences. Use the mean_stress and its standard error, and use geom_linerange() instead of geom_errorbar. Linerange and errorbar use the same arguments.
-Graduate and Honors students
-
-You must modify one of the above graphs with the following requirements:
-
-    use size of 3 for the point located at the mean,
-    color the point maroon,
-    place the error bars behind the points so that a black line does not cur across the face of each point.
-    Assume you like the Tie Fighter look but you do not want them so exaggerated. Size them to something much smaller but still present. The exact size depends on your tastes. Note: I encourage undergrads to attempt this but this does not count for or against your grade.
-
-et Vóila
-
-    The tarsus looks like part of the bird’s leg but is homologous to the tarsal bones in the vertebrate foot.↩
-
-
+```{r}
+ggplot(data = feathers, mapping = aes(x = site, y = stress_cort)) + 
+  geom_point() +
+  geom_linerange(ymin = min_stress_cort, ymax = max_stress_cort)
+```
