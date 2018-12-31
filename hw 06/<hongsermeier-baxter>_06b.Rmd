@@ -227,7 +227,7 @@ Use the locale = locale(<argument>) argument in the read_csv() function to speci
 ```{r}
 names <- c("capture_date", "day", "site", "urban_score", "cortF", "cortB", "sex", "smi", "tarsus", "mass", "basal_cort", "stress_cort")
 file_path <- "~/Documents/BI485/hongsermeier-baxter_madison/data"
-feathers <- read_csv(file.path(file_path, "feathers.csv"), locale = locale(decimal_mark = "."), skip = 1, col_names = names)
+feathers <- read_csv(file.path(file_path, "feathers.csv"), locale = locale(decimal_mark = ","), skip = 1, col_names = names)
 ```
 
 ```{r}
@@ -276,31 +276,44 @@ feathers <- mutate(feathers,
 feathers
 ```
     
-    
+Group by site
+```{r}
+feathers %>% 
+  group_by(site)
+```
 
-
-
-Summarie data
-
-Next, summarize the basal and stress corticosterone data.
-
-    Group by site, and calculate the mean and standard error of the mean (SEY)
-
-    for basal_cort and stress_cort. Standard error of the mean is calculated as,
-
-SEY=sn‾√,
-
-where s
-is the standard deviation and n
-
-is the number of individuals. You can calculate the standard deviation in R with the sd() function. Do not forgot to include na.rm = TRUE in the arguments for mean() and sd(), as shown in the text.
-Graph data
+calculate the mean and standard error of the mean (SEY) for basal_cort and stress_cort
+```{r}
+mean_basal_cort <- mean(feathers$basal_cort)
+mean_stress_cort <- mean(feathers$stress_cort)
+sd_basal_cort <- sd(feathers$basal_cort, na.rm = TRUE)
+sd_stress_cort <- sd(feathers$stress_cort, na.rm = TRUE)
+se_basal_cort <- sd_basal_cort/(sqrt(43))
+se_stress_cort <- sd_stress_cort/(sqrt(43))
+se_basal_cort
+se_stress_cort
+```
 
 Plot 1
-
     Make a boxplot of new_smi for each site. Do you see any clear differences among the four sites?
+    
+There are clear differences among the sites. "Niort" has the lowest "new_smi" values. "Larochelle" has higher values. "Villefollet" has higher values. "Cebc" has the highest values.
+```{r}
+ggplot(data = feathers, mapping = aes(x = new_smi, y = site)) + 
+  geom_boxplot()
+```
 
 Plot 2 A common graph is to plot the means with error bars based on the standard errors of the means.
+```{r}
+ggplot(data = feathers, mapping = aes(x = basal_cort, y = site)) + 
+  geom_point() +
+  geom_errorbar(ymin = , ymax = )
+```
+
+```{r}
+mean_basal_cort
+se_basal_cort
+```
 
     Make a plot of the basal corticosterone concentration (ng/ml) for each site. Use geom_point(). Add a geom_errorbar() layer. Use the ? function and the interwebs if you need, but here are a few hints:
         x should be the sites,
