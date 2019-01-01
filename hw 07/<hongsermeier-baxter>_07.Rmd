@@ -1,0 +1,233 @@
+---
+title: "HW 07: Data Visualization"
+author: "Madison Hongsermeier-Baxter"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse)
+library(GGally)
+library(patchwork)
+```
+
+# Part 1: Recreate the Zuur figures
+
+## Import and Wrangle
+
+Import sparrow.txt.
+```{r}
+file_path <- "~/Documents/BI485/hongsermeier-baxter_madison/data"
+sparrows_raw <- read_tsv(file.path(file_path, "sparrows.txt"))
+```
+
+View() the imported data to be sure the data look like they were properly imported.
+```{r}
+View(sparrows_raw)
+```
+
+Add two columns. Create new tibble called sparrows. Use this tibble for the remaining steps.
+```{r}
+sparrows <- sparrows_raw %>% 
+  mutate(box_group = "Sparrows",
+         row_order = 1:nrow(.))
+```
+
+Run View(sparrows) to ensure that you have both columns.
+```{r}
+View(sparrows)
+```
+
+## Figure 2: outliers
+
+Generate boxplot.
+```{r}
+plot_box <- sparrows %>% 
+  ggplot(aes(x = box_group, 
+             y = wingcrd)) +
+  geom_boxplot(width = 0.25) +
+  labs(x = NULL,
+       y = "Wing length (mm)")
+```
+
+Generate Cleveland dot plot.
+```{r}
+plot_cleveland <- sparrows %>% 
+  ggplot(aes(x = wingcrd,
+             y = row_order)) +
+  geom_point() +
+  labs(x = "Wing length (mm)",
+       y = "Order of the data")
+```
+
+Put the two plots side-by-side.
+```{r}
+plot_box + plot_cleveland
+```
+
+Switch x axis and y axis.
+```{r}
+plot_box + plot_cleveland + coord_flip()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+Comparison shows that the longest wing (row 536) is not very different at all from the other long wings. Similarly, the shortest wing outlier is not very different from the other short wings. That suggests these data are OK to include in subsequent analyses.
+Figure 3: outliers
+
+A good scientist such as yourself will look at every variable in the data set to search for outliers. Figure 3 shows six more variables from the sparrows data set.
+
+Before we begin, look again at the patchwork examples. You can add a plot_layout(ncol = ) layer to specify the number of columns. (You could also use nrow.) Figure 3 has three columns in two rows. For example, if we wanted Figure 2 to place one graph above the other, we have run plot_box + plot_cleveland + plot_layout(ncol = 1)
+
+An assignment
+
+You are to write a single chunk of code that makes the six graphs shown in Figure 3 and lays them out as shown. I will start you off with the code for the upper left panel (Culmen length). You can adjust the code accordingly. Include but do not worry about the theme() lines. They remove the y-axis information which we do not need. Notice that I use p_<variable> to indicate the name of each saved plot. For example, the first variable is culmen so I saved the plot as p_culmen.
+
+While I encourage you to type every example, you have my permission to copy and paste, and then adjust the variables as necessary. I suggest you run each plot independently first to be sure it matches the corresponding panel in Figure 3 before assembling them into the final figure.
+
+p_culmen <- sparrows %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = culmen)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+
+The other five variables are nalospi, wt, wingcrd, tarsus, and head. Make a new code chunk and include the code above plus the code to produce the other five graphs, and then lay them out as shown in the figure. If successful, your plot should look like this.
+
+Question: Which three variables appear to have outlier data?
+Figure 5: distribution
+
+The histogram in left panel of Figure 5 shows the number of indivdiuals in each “bin”, or weight class of birds. In their figure, each bin is 0.5 grams wide. For example, notice there are four bins (or columns) between 18 and 20. The first bin includes weights from 18.1-18.5 g. The second bin includes weights from 18.5-19.0 g. The third bin includes weights from 191.-19.5 g. The fourth bin includes weights from 19.6-20.0 g.
+
+The number you use for the binwidth argument depends on the precision of your measurements. If you have weight measurements in 100s of grams, then binwidths of 250 or 500 or even larger may be appropriate. If your units of measurements are around 0.01, then bin widths of 0.05 or 0.1 or 0.25 might be more effective. You usually have to play around with the binwidth to find bins that make sense.
+
+Note: I used the scale_x_continuous() layer to manually set the x-axis scale to mimic the figure. seq(14, 28, by = 2) generates a sequence of numbers from 14 to 28 in increments of 2; i.e., 14, 16, 18, …, 28. You are not requierd to use this option in your plots. If you do, the first number in the seq() funtion will be the left most number on the x-axis. The second number will be the right-most number, and by = will be the incremement.
+
+# Histogram
+h1 <- sparrows %>%
+  filter(Month %in% 6:8) %>% 
+  ggplot() +
+  geom_histogram(aes(x = wt),
+                 binwidth = 0.5,
+                 boundary = 0,
+                 closed = "right",
+                 color = "black") +
+  scale_x_continuous(breaks = seq(14, 28, by = 2))
+
+Now we have to create the right panel. This code filters out all months except 6, 7, or 8, then mutates the numbers to the month names. facet_wrap() arranges the plots alphabetically. We get lucky here because the alphabetical order of June, July, and August correspond to their calendar order. Below, we will have to set the order using factors.
+
+# Faceted Histogram
+h2 <- sparrows %>%
+  filter(Month %in% 6:8) %>% 
+  mutate(Month = case_when(
+    Month == 6 ~ "June",
+    Month == 7 ~ "July",
+    Month == 8 ~ "August")) %>% 
+  ggplot() +
+  geom_histogram(aes(x = wt),
+                 binwidth = 0.5,
+                 boundary = 0,
+                 color = "black") +
+  scale_x_continuous(breaks = seq(14, 28, by = 2)) +
+  facet_wrap(~ Month, ncol = 1)
+
+Finally, we assemble the two plots into a single figure with patchwork.
+
+h1 + h2
+
+Grad and Honors: Recreate this figure using density plots. However, modify the right panel so that all three months are overlaid on the same plot. Go back to the notes and follow the example code for guidance.
+Figure 10: Relationships
+
+You have used scatterplots, like this scatterplot of petal length versus sepal length for three species of Iris. .
+
+Scatterplots are useful for showing the relationship between two variables. The scatterplot above shows a positive linear relationship between the length of petals and sepals. Individuals (and species) with longer petals tend to have longer sepals. Taken together, those individuals tend to have larger flowers.
+
+Another essential step in any graphical analysis of data is to explore relationships among the variables, like that shown by Figure 10. The panels above the diagonal are scatterplots that show pairwise relationships between the continuous variables in the sparrow data. The intersection of a row with a column shows the scatterplot for a specific pair of variables. The panels below the diagonal shows the Pearson correlation coefficients, r.
+
+The coefficients range from 0 to 1. Higher values indicate stronger relationships between the two variables.
+
+As you might imagine, writing the code for dozens of scatterplots could quickly grow tedious, even with copy and paste. You have to ensure you changed each of the variables exactly right. Fortunately, the GGally package provides the ggscatmat and ggpairs functions. Before you go farther, scroll down to browse through the examples for these functions. ggscatmat creates only a scatterplot matrix, which we will use. ggpairs() can produce many more types of plots in the matrix, as you saw looking through the examples.
+
+We will use the columns argument of ggscatmat to specify the first seven columns of data. If you want to plot all columns (helpful but not always wise), you do not have to supply the columns argument.
+
+Note: ggscatmat and ggpairs do a lot of work so this step may take more than the usual time, depending on the speed of your computer. `ggscatmat is faster than ggpairs because it does less.
+
+sparrows %>% ggscatmat(columns = 1:7)
+
+ggscatmat includes a density plot on the diagonal and puts the scatterplots below the diagonal, but we otherwise recreated Figure 10 with a single line of code. Niiiice.
+Figure 11: interactions
+
+Interaction effects among independent variables that affect the dependent variables can confound a statistical analysis. For example, assume you are studying growth rate and time to sexual maturity in a territorial species. In many species, males grow faster to be able to defend a territory sooner but at the cost of delayed sexual maturity. Male energy is directed toward growth rather than reproduction early in life. In contrast, females might become sexually mature more quickly but at the cost of smaller body size. This represents an interaction between sex and energy investment that influences growth rate and time to sexual maturity.
+
+Run the code below to show the interaction between sex and season (months). A few things about the code. filter is keeping only months 5-9 (May through September) and removing immature individuals (coded as 0). mutate changes the months from numbers to ordered names (factors) so that the month names appear in proper order as columns. geom_smooth uses method = "lm" (linear model) to add the trend line, and se = FALSE removes the default standard error shading around the trend line.
+
+Note: The code here uses the factor() function just like you have used in Base R, but we converted Months to factors as part of mutate().
+
+month_order = c("May", "June", "July", "August", "September")
+sparrows %>% 
+  filter(Month %in% 5:9,
+         Sex != 0) %>% 
+  mutate(Month = case_when(
+    Month == 5 ~ "May",
+    Month == 6 ~ "June",
+    Month == 7 ~ "July",
+    Month == 8 ~ "August",
+    Month == 9 ~ "September"),
+    Month = factor(Month, levels = month_order, ordered = TRUE),
+    Sex = ifelse(Sex == 4, "Male", "Female")) %>% 
+  ggplot(aes(x = wingcrd,
+             y = wt)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_grid(Sex ~ Month)
+
+If trend lines are parallel, or roughly so, then interaction effects are probably absent or not significant. In the figure above, male and female weights trend in opposite directions during May. This could be because females are producing eggs and males are more aggressively defending terroritories, gathering nest material, or something else. However, as noted in the text, the sample sizes for May are very small, so the best approach would be to gather more data if possible. If collecting additional data is not possile, then that result should be interepreted cautiously.
+
+You are now armed with some of the skills and tools needed for the first stages of robust data analysis. Time to put your skills to test.
+Part 2: Habitat parameters for Aegla crabs
+Data exploration: crabs
+
+Aegla is a genus of South American freshwater crabs. Satterlee et al., as part of his research, collected water quality parameters. Those data are included in aegla_crabs.csv.
+
+The variables are - Site (sampling locations) - Width, Depth (stream width and depth) - Flow (rate of water movement) - AT, WT (air and water temperature) - pH (pH. What did you expect me to say, log molar hydrogen ion concentration?) - TDS (total dissolved solids) - Cond (conductivity) - N, Ni, Nt (Nitrogen, Nitrate, Nitrite concentrations) - Phos, Mg, Ca (phosphate, magnesium, calcium concentrations) - Shrimp, Aeglam, AeglaFe, AeglaFo (number of shrimp and crabs sampled)
+
+Your goal is simple but it will take time.
+
+    Import the raw data from aegla_crabs.csv.
+
+    Use select() to remove the Site, AT, WT, Shrimp, Aeglam, AeglaFe, AeglaFo columns.
+
+    Use drop_na() to remove the one row with missing water quality data.
+
+    Create a row_order dummy variable like we did for the sparrows.
+
+    Its up to you whether to use the more efficient pipes or the less efficient method of creating new variables for each step.
+
+    Explore the data. There are three apparent outliers among the variables but only one that I think is an actual outlier. Find them and justify your choices.
+
+    Choose four variables to make Cleveland plots, and make a 2x2 grid with the four plots, using patchwork.
+    Choose three different variables to make histograms. Play with the bins or binwidths argument that you think reveals the data well. Hint: the default bins = 30 that geom_histogram is usually not a suitable choice. Save each histogram to a unique variable.
+    Use the same three variables to produce density plots. Save each plot to a unique variable.
+
+    Use `patchwork to produce a 2 column matrix with the histograms in the left column and the corresponding density plots in the right column.
+
+    Use ggpairs to explore the relationships among all the variables.
+
+The Aegla crabs data is not suitable for testing for interactions. I’ll see if I can find an opportunity to do that in a future assignment. I know you are thrilled.
+
+et Vóila
+
+
+
+
