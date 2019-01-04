@@ -207,3 +207,232 @@ sparrows %>%
   geom_smooth(method = "lm", se = FALSE) +
   facet_grid(Sex ~ Month)
 ```
+
+# Part 2: Habitat parameters for Aegla crabs
+
+Import the raw data from aegla_crabs.csv.
+```{r}
+library(tidyverse)
+file_path <- "~/Documents/BI485/hongsermeier-baxter_madison/data"
+crabs <- read_csv(file.path(file_path, "aegla_crabs.csv"))
+crabs
+```
+
+Use select() to remove the Site, AT, WT, Shrimp, Aeglam, AeglaFe, AeglaFo columns.
+```{r}
+crabs2 <- crabs %>%
+select(Width, Depth, Flow, pH, TDS, Cond, N, Ni, Nt, Phos, Mg, Ca, Crab)
+crabs2
+```
+
+Use drop_na() to remove the one row with missing water quality data. Create a row_order dummy variable like we did for the sparrows.
+```{r}
+crabs3 <- 
+  crabs2 %>%
+  drop_na() %>%
+         mutate(row_order = 1:nrow(.))
+crabs3
+```
+
+Explore data to find variables with outliers.
+
+width
+```{r}
+width1 <- crabs3 %>% 
+  ggplot(aes(x = row_order)) +
+  geom_boxplot(aes(y = Width)) 
+```
+
+depth
+```{r}
+depth1 <- crabs3 %>% 
+  ggplot(aes(x = row_order)) +
+  geom_boxplot(aes(y = Depth))
+```
+
+flow
+```{r}
+flow1 <- crabs3 %>% 
+  ggplot(aes(x = row_order)) +
+  geom_boxplot(aes(y = Flow))
+```
+
+pH
+```{r}
+ph1 <- crabs3 %>% 
+  ggplot(aes(x = row_order)) +
+  geom_boxplot(aes(y = pH))
+```
+
+TDS
+```{r}
+tds1 <- crabs3 %>% 
+  ggplot(aes(x = row_order)) +
+  geom_boxplot(aes(y = TDS))
+```
+
+cond
+```{r}
+cond1 <- crabs3 %>% 
+  ggplot(aes(x = row_order)) +
+  geom_boxplot(aes(y = Cond))
+```
+
+N
+```{r}
+n1 <- crabs3 %>% 
+  ggplot(aes(x = row_order)) +
+  geom_boxplot(aes(y = N))
+```
+
+Ni
+```{r}
+ni1 <- crabs3 %>% 
+  ggplot(aes(x = row_order)) +
+  geom_boxplot(aes(y = Ni))
+```
+
+phos
+```{r}
+phos1 <- crabs3 %>% 
+  ggplot(aes(x = row_order)) +
+  geom_boxplot(aes(y = Phos))
+```
+
+Mg
+```{r}
+mg1 <- crabs3 %>% 
+  ggplot(aes(x = row_order)) +
+  geom_boxplot(aes(y = Mg))
+```
+
+Ca
+```{r}
+ca1 <- crabs3 %>% 
+  ggplot(aes(x = row_order)) +
+  geom_boxplot(aes(y = Ca))
+```
+
+Crab
+```{r}
+crab1 <- crabs3 %>% 
+  ggplot(aes(x = row_order)) +
+  geom_boxplot(aes(y = Crab))
+```
+
+```{r}
+width1 + depth1 + flow1 + ph1 + tds1 + cond1 + n1 + ni1  + phos1 + mg1 + ca1 + crab1 + plot_layout(ncol = 6)
+```
+
+There are three apparent outliers among the variables but only one that I think is an actual outlier. Find them and justify your choices.
+
+Width, depth, and pH all have outliers. These variables all show single outliers with significant distance from the majority of the data. Width seems to have the most apparent outlier; it it the most distant outlier.
+
+
+Choose four variables to make Cleveland plots, and make a 2x2 grid with the four plots, using patchwork.
+
+```{r}
+width2 <- crabs3 %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Width)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+n2 <- crabs3 %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = N)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+flow2 <- crabs3 %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Flow)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+ph2 <- crabs3 %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = pH)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+width2 + n2 + flow2 + ph2 + plot_layout(ncol = 2)
+```
+
+Choose three different variables to make histograms. Play with the bins or binwidths argument that you think reveals the data well. Save each histogram to a unique variable.
+
+```{r}
+hist_crab <- crabs3 %>%
+  ggplot() +
+  geom_histogram(aes(x = Crab),
+                 binwidth = 1,
+                 boundary = 0,
+                 closed = "right",
+                 color = "black") +
+  scale_x_continuous(breaks = seq(0, 24, by = 2))
+hist_crab
+```
+
+```{r}
+hist_width <- crabs3 %>%
+  ggplot() +
+  geom_histogram(aes(x = Width),
+                 binwidth = .5,
+                 boundary = 0,
+                 closed = "right",
+                 color = "black") +
+  scale_x_continuous(breaks = seq(0, 12, by = 2))
+hist_width
+```
+
+```{r}
+hist_depth <- crabs3 %>%
+  ggplot() +
+  geom_histogram(aes(x = Depth),
+                 binwidth = .5,
+                 boundary = 0,
+                 closed = "right",
+                 color = "black") +
+  scale_x_continuous(breaks = seq(0, 5, by = 1))
+hist_depth
+```
+
+Use the same three variables to produce density plots. Save each plot to a unique variable.
+
+```{r}
+density_crab <- crabs3 %>% 
+  ggplot() +
+  geom_density(aes(x = Crab)) +
+  scale_x_continuous(breaks = seq(0, 24, by = 2))
+density_crab
+```
+
+```{r}
+density_width <- crabs3 %>% 
+  ggplot() +
+  geom_density(aes(x = Width)) +
+  scale_x_continuous(breaks = seq(0, 12, by = 2))
+density_width
+```
+
+```{r}
+density_depth <- crabs3 %>% 
+  ggplot() +
+  geom_density(aes(x = Depth)) +
+  scale_x_continuous(breaks = seq(0, 5, by = 1))
+density_depth
+```
+
+Use `patchwork to produce a 2 column matrix with the histograms in the left column and the corresponding density plots in the right column.
+
+```{r}
+histograms <- hist_crab + hist_width + hist_depth + plot_layout(nrow = 3)
+densityplots <- density_crab + density_width + density_depth + plot_layout(nrow = 3)
+histograms | densityplots
+```
+
+Use ggpairs to explore the relationships among all the variables.
+
+```{r}
+crabs3 %>% ggpairs(columns = 1:14)
+```
