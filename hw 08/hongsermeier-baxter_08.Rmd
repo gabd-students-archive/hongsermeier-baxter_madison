@@ -1,0 +1,140 @@
+---
+title: "HW 08: Dates"
+author: "Madison Hongsermeier-Baxter"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse)
+install.packages("lubridate")
+library(lubridate)
+```
+
+# Part 1: Play date
+
+Add the code chunk to your file. You may copy and paste. Change birth_date to your actual birth date between the quotes.
+```{r}
+birth_date <- "November 27, 1996"
+
+# Elizabeth Garret Anderson was the first female physician
+anderson <- "9 June 1836"
+
+# Mary Anning discovered the first complete Plesiosaur fossil, 
+# and other important Jurassic fossils
+anning <-  "1799/05/21"
+
+# Alice Augusta Ball was a chemist who developed the
+# first injectable treatment for leprosy.
+ball <- "July 24, 1892"
+
+# Sylvia Earle was the first chieft scientist at NOAA
+earle <- "August, 30 (1935)"
+
+# Rosalind Franklin used x-ray diffraction to 
+# discover DNA structure. Watson and Crick claimed credit.
+franklin <- "25th of July, 1920"
+
+# Ester Lederberg was the first to discover that viruses 
+# infect bacteria. Led to discovery of lambda bacteriophage
+lederberg <- "December 18, 1922"
+
+# Barbara McClintock discovered transposable elements (jumping genes),
+# and developed staining techniques to study chromosomes
+mcclintock <- "16061902"
+
+# Martin Luther King's birthday is coming up. Let's remember a dream
+mlk_birth <- "1/15/29"
+mlk_dream <- "1963 August 08"
+```
+
+Convert each date to POSIXct format, using lubridate functions, saving each to a unique variable. Print each result.
+```{r}
+birth_date <- mdy("November 27, 1996")
+anderson <- dmy("9 June 1836")
+anning <- ymd("1799/05/21")
+ball <- mdy("July 24, 1892")
+earle <- mdy("August, 30 (1935)")
+franklin <- dmy("25th of July, 1920")
+lederberg <- mdy("December 18, 1922")
+mcclintock <- dmy("16061902")
+mlk_birth <- mdy("1/15/29")
+mlk_dream <- ymd("1963 August 08")
+birth_date_dttm <- as_datetime(birth_date)
+anderson_dttm <- as_datetime(anderson)
+anning_dttm <- as_datetime(anning)
+ball_dttm <- as_datetime(ball)
+brakhane_dttm <- as_datetime(birth_date)
+earle_dttm <- as_datetime(earle)
+franklin_dttm <- as_datetime(franklin)
+lederberg_dttm <- as_datetime(lederberg)
+mcclintock_dttm <- as_datetime(mcclintock)
+mlk_birth_dttm <- as_datetime(mlk_birth)
+mlk_dream_dttm <- as_datetime(mlk_dream)
+birth_date_dttm
+anderson_dttm
+anning_dttm
+ball_dttm
+brakhane_dttm
+earle_dttm
+franklin_dttm
+lederberg_dttm
+mcclintock_dttm
+mlk_birth_dttm
+mlk_dream_dttm
+```
+
+Check yours dates to be sure they are correct. If you spot any errors, correct them now using the proper lubridate function(s).
+```{r}
+mlk_birth <- update(mlk_birth, year = 1929)
+mlk_birth
+```
+
+What day of the week were you born on? Show the full day name, not the abbreviated name or the day number.
+```{r}
+wday(birth_date_dttm, label = TRUE, abbr = FALSE)
+```
+
+ What day of the week will your birthday be on this year? Use lubridate’s update function. You can hard code this year but you must figure out how to do it entirely by code for full points. In other words, you code should work just as well next year or five years in the future, without editing.
+```{r}
+now <- now()
+year <- year(now)
+this_year_birth_date <- update(birth_date_dttm, year = year)
+this_year_birth_date
+wday(this_year_birth_date, label = TRUE, abbr = FALSE)
+```
+
+ What day of the week would your birthday be on in the Year 2525, if Man is still alive? How old would you be? Here you may hard-code 2525. Show the abbreviated day of the week.
+```{r}
+
+```
+
+How many days was it between the birth of Dr. Elizabeth Garrett Anderson and Alice Augusta Ball?
+```{r}
+
+```
+
+What is the duration between Martin Luther King Jr.’s birth date and his I Had a Dream speech.
+```{r}
+
+```
+
+Enter the eight POSIXct compatible birth dates into a vector, including your own, in the order they are given above. Name each element of the vector with the last name of each person (review Assignment 2, part 2). You can but do not have to enter the date of the Dream speech.
+```{r}
+
+```
+
+Of the eight birth dates from above, including your own, which of them are leap years? You must
+        start with the POSIXct dates in your vector, and
+        display the final result as only the years of the leap years, not the date. You should end up with 3-4     years, depending on whether your birth year was a leap year. If your results show the full birth dates,       then you need to apply one of the lubridate functions.
+```{r}
+
+```
+
+Subtract each birth date in the vector from your own to calculate the number of days that have passed between their birth dates and yours. Sort the results from greatest number of days to fewest. You should be listed last (or near the end) with a difference of 0 days.
+```{r}
+
+```
+
