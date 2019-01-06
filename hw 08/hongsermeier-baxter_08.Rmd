@@ -281,27 +281,25 @@ ggplot(data = soil_co22) +
     
 thebes_discharge.csv 
 ```{r}
-
+file_path <- "~/Documents/BI485/hongsermeier-baxter_madison/data"
+thebes_discharge <- read_csv(file.path(file_path, "thebes_discharge.csv"))
+thebes_discharge
 ```
 
-Tidy the data. Use Year for the key and discharge for the value. I recommend dividing the discharge by 1000 to improve interpretation of the y-axis.
+Tidy the data. Use Year for the key and discharge for the value. I recommend dividing the discharge by 1000 to improve interpretation of the y-axis. Group by Year and Month. Summarize the mean discharge. Add an Event column using mutate and case_when.
 ```{r}
-
-```
-
-Group by Year and Month.
-```{r}
-
-```
-
-Summarize the mean discharge. If you end up with NA for Feb 2012, then you forgot to do something. Remember it and fix it.
-```{r}
-
-```
-
-Add an Event column using mutate and case_when. If the year equals 1993 or 2011, then the value should be “Flood”. If the year equals 1988 or 2012, then the value should be “Drought”. Otherwise, the value should be “Normal”.
-```{r}
-
+thebes_discharge1 <- thebes_discharge %>%
+  gather ("1988":"2018", key = "Year", value = "discharge") %>% 
+  group_by(Year, Month) %>% 
+  mutate(discharge = discharge / 1000,
+         Event = case_when(
+           Year== "1993" ~ "Flood",
+           Year == "2011" ~ "Flood",
+           Year == "1988" ~ "Drought",
+           Year == "2012" ~ "Drought",
+           TRUE ~ "Normal"),
+         average_discharge = mean(discharge), na.rm = FALSE)
+thebes_discharge1
 ```
 
 ### Make a second data set    
@@ -309,29 +307,33 @@ Add an Event column using mutate and case_when. If the year equals 1993 or 2011,
 Filter your data set to include only the data for the four flood or drought event years. This smaller data set should have the same columns as the larger data set but only 48 rows (4 years, 12 months each). Your code should look something like the following. Try to think of the most efficient way of filtering your data. Hint: %in%.    
 
 ```{r}
-events <- big_data_set %>% 
-  filter(...)
+events <- thebes_discharge1 %>% 
+  filter(Event %in% c("Flood", "Drought"))
+events
 ```
     
 ### Plot the data
     
 Plot a line graph of the mean discharge by month.
 ```{r}
-
+mean_discharge_plot <- thebes_discharge1 %>%
+  ggplot() +
+  geom_line(aes(x = Month, y = average_discharge, group = Year),
+            color = "gray70",
+            size = 0.3) +
+  labs(x = NULL,
+       y = "Discharge (cf/s, thousands)")
+mean_discharge_plot
 ```
     
-Use 0.3 for size and gray70 for color. Adjust the axis labels like that shown here. Bonus pudding for dessert if you figure out how to make the Y-axis label like that in the final plot below.
-```{r}
-
-```
-
-Once you have this plot looking good like that shown here, save it in an object, e.g., p1 <- plot code.
-```{r}
-
-```
-
 We will now add the second layer using the smaller data set., by using this code format. Mapping and grouping is the same as above, but add a color = Event argument to the aes() mapping function. Important: If you did not use Event as your event column name, then you must substitute the column name that you did use.
 ```{r}
-
+thebes_discharge1 %>%
+  ggplot() +
+  geom_line(aes(x = Month, y = average_discharge, group = Year),
+            color = "gray70") +
+  labs(x = NULL,
+       y = "Discharge (cf/s, thousands)") +
+  geom_line(data = events, aes(x = Month, y = average_discharge, group = Year, color = Event))
 ```
 
