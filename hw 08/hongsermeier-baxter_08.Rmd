@@ -88,8 +88,8 @@ mlk_dream_dttm
 
 Check yours dates to be sure they are correct. If you spot any errors, correct them now using the proper lubridate function(s).
 ```{r}
-mlk_birth <- update(mlk_birth, year = 1929)
-mlk_birth
+mlk_birth_dttm <- update(mlk_birth, year = 1929)
+mlk_birth_dttm
 ```
 
 What day of the week were you born on? Show the full day name, not the abbreviated name or the day number.
@@ -108,32 +108,229 @@ wday(this_year_birth_date, label = TRUE, abbr = FALSE)
 
  What day of the week would your birthday be on in the Year 2525, if Man is still alive? How old would you be? Here you may hard-code 2525. Show the abbreviated day of the week.
 ```{r}
-
+birth_date_2525 <- update(birth_date_dttm, year = 2525)
+wday(birth_date_2525, label = TRUE, abbr = TRUE)
+age_2525 <- interval(ymd(birth_date_dttm), ymd(birth_date_2525))
+time_length(age_2525, "year")
 ```
 
 How many days was it between the birth of Dr. Elizabeth Garrett Anderson and Alice Augusta Ball?
 ```{r}
-
+ball_dttm - anderson_dttm
 ```
 
 What is the duration between Martin Luther King Jr.’s birth date and his I Had a Dream speech.
 ```{r}
-
+mlk_duration <- mlk_dream - mlk_birth
+mlk_duration <- as.duration(mlk_duration)
+mlk_duration
 ```
 
 Enter the eight POSIXct compatible birth dates into a vector, including your own, in the order they are given above. Name each element of the vector with the last name of each person (review Assignment 2, part 2). You can but do not have to enter the date of the Dream speech.
 ```{r}
-
+birth_dates_vector <- c(birth_date_dttm, anderson_dttm, anning_dttm, ball_dttm, earle_dttm, franklin_dttm, lederberg_dttm, mcclintock_dttm, mlk_birth_dttm)
+names(birth_vector) <- c("Hongsermeier", "Anderson", "Anning", "Ball", "Earle", "Franklin", "Lederberg", "McClintock", "King")
 ```
 
 Of the eight birth dates from above, including your own, which of them are leap years? You must
         start with the POSIXct dates in your vector, and
         display the final result as only the years of the leap years, not the date. You should end up with 3-4     years, depending on whether your birth year was a leap year. If your results show the full birth dates,       then you need to apply one of the lubridate functions.
 ```{r}
-
+leap_years <- leap_year(birth_dates_vector)
+year(birth_dates_vector[leap_years])
 ```
 
 Subtract each birth date in the vector from your own to calculate the number of days that have passed between their birth dates and yours. Sort the results from greatest number of days to fewest. You should be listed last (or near the end) with a difference of 0 days.
+```{r}
+days_passed <- time_length(birth_vector - birth_date_dttm, "day")
+sort(days_passed, decreasing = FALSE)
+```
+
+# Part 2: Wrangling and plotting with dates
+
+## Lake Ice 
+
+Import lake_ice.csv
+```{r}
+file_path <- "~/Documents/BI485/hongsermeier-baxter_madison/data"
+lake_ice <- read_csv(file.path(file_path, "lake_ice.csv"))
+```
+
+Filter the data to save only Lake Mendota. Use the lake code of DMR1 or the lake name of LAKE MENDOTA. Case matters!
+```{r}
+lake_mendota <- filter(lake_ice, lakename == "LAKE MENDOTA")
+lake_mendota
+```
+
+Select these six columns. You can do this in one of a few different ways but you should be able to do this very efficiently. Look back at Section 5.4 to review.
+        iceon_year
+        iceon_month
+        iceon_day
+        iceoff_year
+        iceoff_month
+        iceoff_day
+```{r}
+select(lake_mendota, iceon_year, iceon_month, iceon_day, iceoff_year, iceoff_month, iceoff_day)
+```
+
+Use lubridate functions to assemble the ice on year, month, and date into an ice_on date column. Use the same process to assemble the ice off information to make an ice_off date column.
+```{r}
+lake_mendota2 <- lake_mendota %>% 
+  select(iceon_year, iceon_month, iceon_day, iceoff_year, iceoff_month, iceoff_day) %>% 
+  mutate(ice_on = make_date(iceon_year, iceon_month, iceon_day),
+         ice_off = make_date(iceoff_year, iceoff_month, iceoff_day))
+```
+
+Create a new duration column by subtracting ice_on from ice_off. Make a note of the unit of time for duration. Important: Subtracting the dates will result in a difftime object. Use as.numeric(ice_off - ice_on) to convert the result to a numeric object.
+```{r}
+lake_mendota3 <- lake_mendota2 %>% 
+  mutate(duration = as.numeric(ice_off - ice_on))
+lake_mendota3
+```
+
+Make a line graph to show how duration changed over iceoff_year. Use na.rm = TRUE where needed to remove durations with no data.
+```{r}
+ggplot(data = lake_mendota3) +
+  geom_line(mapping = aes(x = iceoff_year, y = duration), na.rm = TRUE)+
+  coord_cartesian(xlim = c(1850, 2020))
+```
+    
+Make appropriate labels for the X- and Y-axes. Remember to include the unit of measurement for ice duration.
+```{r}
+ggplot(data = lake_mendota3) +
+  geom_line(mapping = aes(x = iceoff_year, y = duration), na.rm = TRUE)+
+  coord_cartesian(xlim = c(1850, 2015)) +
+  labs(x = "Year", y = "Ice Duration (Days)")
+```
+
+## Soil Carbon Dioxide
+
+Import the soil_co2.txt dataset.
+```{r}
+file_path <- "~/Documents/BI485/hongsermeier-baxter_madison/data"
+soil_co2 <- read.delim(file.path(file_path, "soil_co2.txt"))
+soil_co2
+```
+
+Establish a POSIXct-compatible date variable for 01 January 2006.
+```{r}
+january_1_2006 <- make_date(year = 2006, day = 1, month = 1)
+january_1_2006
+```
+
+
+Rename the columns so that they are syntactic.
+
+```{r}
+soil_co2 <- soil_co2 %>% 
+  rename(Day = DayN..) %>% 
+  rename(Date_sampled = Datecode..) %>% 
+  rename(Min = Min..) %>% 
+  rename(Vegetation = Veg..) %>% 
+  rename(Plot = Plot..) %>% 
+  rename(Group = Group..) %>% 
+  rename(CO2_concentration = CorrCO2..) %>% 
+  rename(Soil_type = SoilT..)
+```
+
+
+```{r}
+soil_co2
+```
+
+
+Make a Date column that adds the day of CO2 measurement to the 01 Jan 2006 reference date. Make sure lubridate is loaded.Create a Year column that extracts just the year from your new Date column. Create a Month column that extracts just the month from your new Date column. The month should be the three-letter text form (e.g., “Jan”). Group your data by Year and Month.
+```{r}
+soil_co21 <- soil_co2 %>% 
+  mutate(Date = january_1_2006 + Day,
+         Year = year(Date),
+         Month = month(Date, label = TRUE, abbr = TRUE)) %>% 
+  group_by(Year, Month)
+soil_co21
+```
+
+Summarize mean CO2 and standard error of the mean. You had to calculate standard error for a previous assignment so you can review your previous code.
+```{r}
+soil_co22 <- soil_co21 %>% 
+  summarise(
+    Mean_CO2 = mean(CO2_Concentration),
+    SE_CO2 = sd(CO2_Concentration)/sqrt(NROW(soil_co21))
+  )
+soil_co22
+```
+
+Make a column chart of mean CO2 for each month. Use either geom_errorbar or geom_linerange to plot the standard error of the mean. Use facet_wrap on Year to make plots the results by year. If you use geom_errorbar, then use the width argument to make reasonable horizontal lines.
+```{r}
+ggplot(data = soil_co22) +
+  geom_col(aes(x = Month, y = Mean_CO2)) +
+  geom_linerange(aes(x = Month, ymin = Mean_CO2 - SE_CO2, ymax = Mean_CO2 + SE_CO2)) +
+  facet_wrap(~Year, nrow = 2)
+```
+    
+Make the same plot but use points instead of columns, and use only geom_linerange.
+```{r}
+ggplot(data = soil_co22) +
+  geom_point(aes(x = Month, y = Mean_CO2)) +
+  geom_linerange(aes(x = Month, ymin = Mean_CO2 - SE_CO2, ymax = Mean_CO2 + SE_CO2)) +
+  facet_wrap(~Year, nrow = 2)
+```
+
+## Mississippi River Discharge
+
+### Import and Wrangle
+    
+thebes_discharge.csv 
+```{r}
+
+```
+
+Tidy the data. Use Year for the key and discharge for the value. I recommend dividing the discharge by 1000 to improve interpretation of the y-axis.
+```{r}
+
+```
+
+Group by Year and Month.
+```{r}
+
+```
+
+Summarize the mean discharge. If you end up with NA for Feb 2012, then you forgot to do something. Remember it and fix it.
+```{r}
+
+```
+
+Add an Event column using mutate and case_when. If the year equals 1993 or 2011, then the value should be “Flood”. If the year equals 1988 or 2012, then the value should be “Drought”. Otherwise, the value should be “Normal”.
+```{r}
+
+```
+
+### Make a second data set    
+
+Filter your data set to include only the data for the four flood or drought event years. This smaller data set should have the same columns as the larger data set but only 48 rows (4 years, 12 months each). Your code should look something like the following. Try to think of the most efficient way of filtering your data. Hint: %in%.    
+
+```{r}
+events <- big_data_set %>% 
+  filter(...)
+```
+    
+### Plot the data
+    
+Plot a line graph of the mean discharge by month.
+```{r}
+
+```
+    
+Use 0.3 for size and gray70 for color. Adjust the axis labels like that shown here. Bonus pudding for dessert if you figure out how to make the Y-axis label like that in the final plot below.
+```{r}
+
+```
+
+Once you have this plot looking good like that shown here, save it in an object, e.g., p1 <- plot code.
+```{r}
+
+```
+
+We will now add the second layer using the smaller data set., by using this code format. Mapping and grouping is the same as above, but add a color = Event argument to the aes() mapping function. Important: If you did not use Event as your event column name, then you must substitute the column name that you did use.
 ```{r}
 
 ```
