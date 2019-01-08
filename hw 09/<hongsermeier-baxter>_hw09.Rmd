@@ -15,11 +15,110 @@ install.packages("RColorBrewer")
 install.packages("viridis")
 ```
 
+# Part 1: DNA strings
 
+## Import Data
+
+### Import beta_gliadin.txt using the read_lines() function. Skip the first line.
 ```{r}
-
+beta_gliadin <- read_lines("~/Documents/BI485/hongsermeier-baxter_madison/data/beta_gliadin.txt", skip = 1)
+beta_gliadin
 ```
 
+## From many strings to one
+
+### Remove unwanted characters.
+```{r}
+beta_gliadin1 <- beta_gliadin %>% 
+  str_replace_all("\\s", "\\") %>% 
+  str_replace_all("\\d", "\\") %>% 
+  str_to_upper()
+beta_gliadin1
+```
+
+### Collapse strings.
+
+```{r}
+beta_gliadin2 <- beta_gliadin %>% 
+  str_replace_all("\\s", "\\") %>% 
+  str_replace_all("\\d", "\\") %>% 
+  str_c(collapse = "") %>% 
+  str_to_upper()
+beta_gliadin2
+```
+
+### str_length() returns the length of a string. How long is the total DNA sequence? You should get 3310 characters.
+
+```{r}
+str_length(beta_gliadin2)
+```
+
+## Sequence analysis: find the promoter region
 
 
 
+
+
+
+
+
+
+These steps will identify the part of the promoter region immediately upstream of the start codon (ATG) of the β
+
+-gliadin gene.
+
+DNA consists of four nucleotides, A, C, G, and T. However, the nucleotides in a sequence cannot always be identified positively. Nucleotides that could not be identified are represented by other letters, standardize by the IUPAC. The letters most commonly used are Y (pyrimidines, C and T), R (purines, A and G), and N (any of the four DNA nucleotides), but there are others, as shown in the list linked above.
+
+    Use str_count() and regex to count the number of IUPAC letters in the sequence that are not A, C, G, or T. Hint: I just gave you one.
+
+Do not save the result of any string counts.
+
+The start codon for nuclear genes is ATG and the stop codon is either TGA or TAA.
+
+    Count how many possible start codons are in the sequence.
+
+    Count how many possible stop codons are located in the sequence. For full credit, I’ll be more impressed if you search for both stop codons with a single regular expression. Hint: |
+
+Well, isn’t that special? The DNA sequence contains 66 start codons and 99 stop codons. That’s too many to work with directly.
+
+    Stage, commit and push.
+
+Let’s find the promotor region that is just upstream from the true start codon. The promoter region for many eukaryotic genes have two distinctive motifs, or short sequences that are important for transcription. The first motif is the “CAAT box” and has a sequence of CCAAT. The second motif is the “TATA box” and has a sequence of CTATAA. 1
+
+    Assign the two motif sequences to variables caat_box and tata_box, respectively.
+
+    Count how many times each of these motifs occurs in the DNA sequence.
+
+The CAAT box occurs 4 times. The TATA box occurs 1 time. The TATA box should be associated with one of the CAAT boxes.
+
+Comparisons of multiple nuclear genes have shown that the CAAT box is usually within 100-150 nucleotides of the start codon. The TATA box tends to be within 50-100 nucleotides of the start codon (at least in gliadin genes).
+
+    Make a regex search string called caat_seq that begins with “CCAAT”, ends with “ATG”", and allows for a stretch of 100-150 nucleotides between the two. Hint: Remember {start, stop}.
+
+    Count how many times this possible sequence occurs.
+
+Cool. You cut your candidate CAAT boxes in half.
+
+    Make a regex search string called tata_seq that begins with “CTATAA”, ends with “ATG”, and allows for a stretch of 50-100 nucleotides between the two. Think about this carefully.
+
+    Count how many times this possible sequence occurs.
+
+Your searches found twice as many caat_seq as tata_seq in the DNA sequence. The next step is to determine which, if any, caat_seq sequences have a tata_seq sequence.
+
+    Use str_extract_all to extract all of the caat_seq sequences and save them in a variable called caat_seqs_all. Use the simplify = TRUE argument in your function call (?str_extract_all for help).
+
+    How long is each extracted sequence? Make a mental note of the length of each one. You should have two sequences that differ in length by nine nucleotides.
+
+## [1] 139 148
+
+    Use str_which() to find which caat_seq has the tata_box sequence. Use that value to extract the full promotor sequence into a variable called promotor.
+
+    Print promotor and determine it’s length.
+
+## [1] "CCAATTGTGAAAGAGATCATGCCATGACAGCTATAAATAGGCCCGCATCGATGATGATCATCCTTCCTCATCCATCATTCTCATAAGTAGAGTGCATCATTCAAGGCAAGCAAGCAGTGGTCAATACAAATCCATCATG"
+
+It should be the sequence that matches that shown and is 139 nucleotides long.
+
+    Stage, commit, and push.
+
+For fun, compare your promoter sequence to the GenBank sequence. Scroll down to “FEATURES”, and then click on the CDS link. The last three nucleotides of your sequence are the first three nucleotides highlighted. If you start working upstream (to the left), you will find your promoter sequence.
