@@ -1,0 +1,25 @@
+---
+title: "HW 09: Strings"
+author: "Madison Hongsermeier-Baxter"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse)
+install.packages("ggthemes")
+library(ggthemes)
+install.packages("RColorBrewer")
+install.packages("viridis")
+```
+
+
+```{r}
+
+```
+
+
+
+
