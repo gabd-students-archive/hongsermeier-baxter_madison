@@ -149,6 +149,86 @@ ggplot(data = ants2, aes(x = reorder(species, total), y = total, group = species
   theme_minimal()
 ```
 
+# Part 3:Phlox Flowers
+
+## Import and wrangle first data set
+
+### Import.
+```{r}
+flower_size <- read.csv("~/Documents/BI485/hongsermeier-baxter_madison/data/flower_size.csv")
+flower_size
+```
+
+### Filter out rows where Flower number is not NA.
+```{r}
+flower_size1 <- flower_size %>% 
+  filter(!is.na(Flower.number))
+flower_size1
+```
+
+### Select the “Species”, “Corolla length (cm)”, and “Corolla width throat (cm)” columns. Make the column names syntactic.
+```{r}
+flower_size2 <- flower_size1 %>% 
+  select(species = Species, cor_length = Corolla.length..cm., throat_width = Corolla.width.throat..cm.)
+flower_size2
+```
+
+### Use separate to separate the species column into genus and species columns, dropping everything else.
+```{r}
+flower_size3 <- flower_size2 %>% 
+  separate(species, into = c("genus", "species"))
+ flower_size3
+```
+
+Group the data by genus and species to summarize the mean() and max() lengths and widths for each species.
+```{r}
+flower_size4 <- flower_size3 %>% 
+  group_by(genus, species) %>% 
+  summarize(mean_length = mean(cor_length), mean_width = mean(throat_width), max_length = max(cor_length), max_width = max(throat_width))
+flower_size4
+```
+
+## Import and wrangle second data set.
+
+### Import.
+```{r}
+flower_pollinators <- read.csv("~/Documents/BI485/hongsermeier-baxter_madison/data/flower_pollinators.csv", na.strings = c("", "NA"))
+flower_pollinators
+```
+
+### Use select() to remove columns that start with “Source” and to remove the Color column.
+```{r}
+flower_pollinators1 <- flower_pollinators %>% 
+  select(-c(Color, starts_with("Source")))
+flower_pollinators1
+```
+
+### Use filter() to remove rows where Pollinator is NA.
+```{r}
+flower_pollinators2 <- flower_pollinators1 %>%
+  filter(!is.na(Pollinator))
+flower_pollinators2
+```
+
+### Use separate() as you did above to separate Species into genus and species columns. Again, I used lower case letters for genus and species.
+```{r}
+flower_pollinators2 %>%
+  separate(Species, into = c("genus", "species"), sep = " ", extra = "drop")
+```
+
+### Save these last three steps in a variable called pollinators.
+```{r}
+pollinators <- flower_pollinators2 %>%
+  separate(Species, into = c("genus", "species"), sep = " ", extra = "drop")
+pollinators
+```
+
+### Use separate() to separate the first pollinator from all other words. The sep argument must be a regex pattern that finds either a comma or a space. Save the result in a column called Syndrome.
+```{r}
+pollinators <- pollinators %>% 
+    separate(Pollinator, into = "Syndrome", sep = " |, ", extra = "drop")
+pollinators
+```
 
 
 
