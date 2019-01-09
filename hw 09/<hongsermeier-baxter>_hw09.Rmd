@@ -105,8 +105,53 @@ promoter
 str_count(promoter)
 ```
 
+# Part 2: Ants
+
+## Import
+```{r}
+ants <- read.csv("~/Documents/BI485/hongsermeier-baxter_madison/data/ants.csv")
+ants
+```
+
+## Wrangle 
+
+### Tidy data.
+```{r}
+library(stringr)
+ants1 <- ants %>% 
+  select(-c(season, seas.code, trt, plot, sample)) %>% 
+  gather(key = species, value = abundance, matches("\\w\\.\\w", ignore.case = FALSE))
+ants1
+```
+
+### Reduce the long species names to eight letter CEP names. Use mutate to turn the year into an order factor with levels “2010” and “2011”. Then, group by year and species, and summarize the total abundance of each species.
+```{r}
+ants2 <- ants1 %>% 
+  mutate(
+    species = str_replace(
+      species,
+      pattern = "(^[A-Z]*\\w{3})\\w{3,}\\.(\\w{4})\\w{2,}",
+      replacement = "\\1\\2"),
+    year = factor(year, levels = c("2010", "2011"), labels = c("2010", "2011"), ordered = TRUE)) %>% 
+  group_by(year, species) %>% 
+  summarise(total = sum(abundance, na.rm = TRUE)
+  )
+ants2
+```
+
+## Plot the data.
+```{r}
+ggplot(data = ants2, aes(x = reorder(species, total), y = total, group = species)) + 
+  geom_line(color = "gray") +
+  geom_point( aes(shape = year), size = 2) +
+  coord_flip() +
+  labs(y = "Total Abundance", x = NULL, shape = "Year") +
+  theme_minimal()
+```
 
 
-    
 
-  
+
+
+
+
