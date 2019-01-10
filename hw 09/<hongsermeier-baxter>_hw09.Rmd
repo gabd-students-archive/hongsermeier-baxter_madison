@@ -288,14 +288,122 @@ ggplot(data = phlox4) +
   geom_point(mapping = aes(x = mean_length, y = mean_width, color = syndrome_group))
 ```
 
+## Improving the Plots
 
+### Use brewer color palette. 
+```{r}
+phlox4 %>% 
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 color = syndrome_group)) +
+#  scale_color_viridis_d(option = "viridis") 
+  scale_color_brewer(type = "qual", palette = "Dark2")
+```
 
+### other palettes
+```{r}
+ggplot(data = phlox4) +
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = syndrome_group)) +
+  scale_color_viridis_d(option="plasma")
 
+ggplot(data = phlox4) +
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = syndrome_group)) +
+  scale_color_viridis_d(option="inferno")
+```
 
+### Use custom semo colors.
+```{r}
+semo_palette <- c("#C8102E", "#DBE245", "#71C5E8", "#B07C57")
+phlox4 %>% 
+  ggplot() +
+  geom_point(aes(x = mean_length,
+                 y = mean_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group)) +
+  scale_shape_manual(values = c(22:25)) +
+  scale_fill_manual(values = semo_palette)
+```
 
+### Use theme_tufte().
+```{r}
+phlox4 %>% 
+  ggplot() +
+  geom_point(aes(x = mean_length,
+                 y = mean_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group),
+             size = 2) +
+  labs(shape = "Syndrome",
+       fill = "Syndrome",
+       x = "Mean Length (cm)",
+       y = "Mean Width (cm)") +
+  theme_tufte() +
+  scale_shape_manual(values = c(22:25)) +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+```
 
+## Part 4: Customize your plots
 
+### Plot 1
+```{r}
+phlox4 %>% 
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 color = syndrome_group)) +
+  labs(color = "Syndrome",
+       fill = "Syndrome",
+       x = "Max Length (cm)",
+       y = "Max Width (cm)") +
+  theme_bw() +
+  scale_shape_manual(values = c(20:23)) +
+  scale_color_viridis_d(option="viridis")
+```
 
+### Plot 2
+```{r}
+phlox4%>%
+  ggplot()+
+  geom_point(aes(x=max_length,
+                 y=max_width,
+                 shape=syndrome_group,
+                 fill=syndrome_group),
+             size=2)+
+  labs(shape="Syndrome",
+       fill="Syndrome",
+       x="Max Length (cm)",
+       y="Max Length (cm)")+
+  scale_shape_manual(values = c(19:22)) +
+  scale_fill_brewer(palette = "Set1")
+```
 
+### Plot 3
+```{r}
+pinkpurple <- c("#D9255E", "#D6555E", "#7A6799", "#7A1484")
+phlox4 %>% 
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group,
+                 size = 2)) +
+  scale_shape_manual(values = c(22:25)) +
+  scale_fill_manual(values = pinkpurple)
+```
 
-
+### Plot 4 (Ugly)
+```{r}
+colors <- c("#D9655E", "#B07C57", "#21B96D", "#7A8984")
+phlox4 %>% 
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group,
+                 size = 2)) +
+  scale_shape_manual(values = c(21:24)) +
+  scale_fill_manual(values = colors)
+```
