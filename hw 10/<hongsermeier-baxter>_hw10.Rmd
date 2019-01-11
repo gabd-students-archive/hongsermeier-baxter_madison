@@ -171,7 +171,334 @@ illinois_map <- ggplot() +
 illinois_map
 ```
 
+### Both maps
 
+#### Birth state: Illinois, Birth county: Madison County, Middle initial county: Iriquois County, Last inital county: Hamilton County
+```{r}
+us_map + illinois_map + plot_layout(ncol = 2, widths = c(1.5,1))
+```
+
+# Part 2: Dot distribution maps
+
+## Example: Distribution of Gigantopithecus and Ursus
+
+### Set the seed.
+```{r}
+# Global vars -------------------------------------------------------------
+
+# Restrict the map to the western US.
+min_long <- -126
+max_long <- -104
+min_lat  <-   31
+max_lat  <-   50
+
+set.seed(9618973)
+```
+
+### Load data. Randomly sample data. Filter the data to restrict the distribution to the longitude and latitude variables. Select only the name, longitude and latitude columns.
+```{r}
+# Bigfoot data ------------------------------------------------------------
+
+bigfoot <- read_csv("~/Documents/BI485/hongsermeier-baxter_madison/data/bigfoot.csv")
+
+bigfoot <- filter(bigfoot,
+                  long >= min_long & long <= max_long,
+                  lat >= min_lat & lat <= max_lat) %>% 
+  sample_n(300) %>% 
+  mutate(name = "Gigantopithecus") %>% 
+  select(name, long, lat)
+```
+
+### Read in the bears.csv data.
+```{r}
+bears <- read_csv("~/Documents/BI485/hongsermeier-baxter_madison/data/bears.csv")
+
+both_species <- bind_rows(bigfoot, bears)
+
+head(both_species)
+```
+```{r}
+tail(both_species)
+```
+
+### Get terrain map.
+```{r}
+base = get_stamenmap(bbox = c(min_long, 
+                              min_lat, 
+                              max_long, 
+                              max_lat),
+                     zoom = 4, 
+                     maptype = "terrain-background")
+
+
+
+ggmap(base)
+```
+
+### Plot the first layer. This layer shows the Bigfoot data.
+```{r}
+base <- ggmap(base)
+
+base + geom_point(data = bigfoot,
+                  aes(x = long,
+                      y = lat))
+```
+
+### Plot the bear data.
+```{r}
+base + geom_point(data = bears,
+                  aes(x = long,
+                      y = lat))
+```
+
+### Plot both species on the map. Use aes to match a shape and fill color to each species.
+```{r}
+base + geom_point(data = both_species,
+                  aes(x = long,
+                      y = lat,
+                      shape = name,
+                      fill = name),
+                  size = 2) +
+  scale_shape_manual(values = c(22:23)) +
+  labs(x = "Longitude",
+       y = "Latitude",
+       fill = "Species",
+       shape = "Species")
+```
+
+## Distribution map: your turn
+
+### Set seed.
+```{r}
+min_long <- -126
+max_long <- -104
+min_lat  <-   31
+max_lat  <-   50
+
+set.seed(1872353)
+```
+
+### Load data. Randomly sample data. Filter the data to restrict the distribution to the longitude and latitude variables. Select only the name, longitude and latitude columns.
+```{r}
+# Bigfoot data ------------------------------------------------------------
+
+bigfoot <- read_csv("~/Documents/BI485/hongsermeier-baxter_madison/data/bigfoot.csv")
+
+bigfoot <- filter(bigfoot,
+                  long >= min_long & long <= max_long,
+                  lat >= min_lat & lat <= max_lat) %>% 
+  sample_n(300) %>% 
+  mutate(name = "Gigantopithecus") %>% 
+  select(name, long, lat)
+```
+
+### Read in the bears.csv data.
+```{r}
+bears <- read_csv("~/Documents/BI485/hongsermeier-baxter_madison/data/bears.csv")
+
+both_species <- bind_rows(bigfoot, bears)
+
+head(both_species)
+```
+```{r}
+tail(both_species)
+```
+
+### Get terrain map.
+```{r}
+base = get_stamenmap(bbox = c(min_long, 
+                              min_lat, 
+                              max_long, 
+                              max_lat),
+                     zoom = 4, 
+                     maptype = "terrain-background")
+
+
+
+ggmap(base)
+```
+
+### Plot the first layer. This layer shows the Bigfoot data.
+```{r}
+base <- ggmap(base)
+
+base + geom_point(data = bigfoot,
+                  aes(x = long,
+                      y = lat))
+```
+
+### Plot the bear data.
+```{r}
+base + geom_point(data = bears,
+                  aes(x = long,
+                      y = lat))
+```
+
+### Plot both species on the map. Use aes to match a shape and fill color to each species.
+
+#### The Bigfoot layer is slightly different from the original but the bear distribution is the same as the original.
+```{r}
+base + geom_point(data = both_species,
+                  aes(x = long,
+                      y = lat,
+                      shape = name,
+                      fill = name),
+                  size = 2) +
+  scale_shape_manual(values = c(22:23)) +
+  labs(x = "Longitude",
+       y = "Latitude",
+       fill = "Species",
+       shape = "Species")
+```
+
+# Part 3: Bathymetry
+
+## Example: Fiji earthquakes
+
+### Define the longitude and latitude range for the map. Convert quake depth to feet.
+```{r}
+min_long <- -170
+max_long <- 164
+min_lat  <- -42
+max_lat  <- -8
+
+# This converts depth in km to depth in feet.
+# Necessary because bathymetry data will be in feet
+earthquakes <- quakes %>% 
+   mutate(depth = depth * 3280.84)
+```
+
+### Obtain the data directly from NOAA.
+```{r}
+# Will auto read the saved file if present.
+
+fiji <- getNOAA.bathy(lon1 = min_long,
+                      lon2 = max_long,
+                      lat1 = min_lat,
+                      lat2 = max_lat,
+                      antimeridian = TRUE,
+                      keep = TRUE)
+```
+
+### Use marmap package to automatically plot bathymetric data with ggplot2.
+```{r}
+autoplot.bathy(fiji, 
+         geom = c("raster", "contour"),
+         size = 0.1,
+         na.rm = TRUE)
+```
+
+### Use a custom gradient by adding a scale_fill_gradient2 layer. Label the x- and y- axes.
+```{r}
+# Using autoplot, which "knows" to use autoplot.bathy
+autoplot(fiji, 
+         geom = c("raster","contour"),
+         size = 0.1,
+         na.rm = TRUE) +
+  scale_fill_gradient2(low = "dodgerblue4", 
+                       mid = "gainsboro", 
+                       high = "darkgreen",
+                       name = "Depth (ft)") +
+  labs(x = "Longitude",
+       y = "Latitude") +
+  theme(axis.title.y = element_text(angle = 0, 
+                                    vjust = 0.5))
+```
+
+### Save the autoplot result to an object called base_map, and then add the Fiji earthquakes data using familiar ggplot layers. Use geom_point to plot the location of each seismic event.
+```{r}
+
+
+base_map <- autoplot(fiji, 
+                     geom = c("raster","contour"),
+                     size = 0.1,
+                     na.rm = TRUE) +
+  scale_fill_gradient2(low = "dodgerblue4", 
+                       mid = "gainsboro", 
+                       high = "darkgreen",
+                       name = "Depth (ft)") +
+  labs(x = "Longitude",
+       y = "Latitude") +
+  theme(axis.title.y = element_text(angle = 0, 
+                                    vjust = 0.5))
+```
+```{r}
+base_map + 
+  geom_point(data = earthquakes,
+             aes(x = long,
+                 y = lat))
+```
+
+### Adjust the size of the points to reflect the magnitude of the each quake. Use the alpha argument to make the points more transparent.
+```{r}
+base_map + 
+  geom_point(data = earthquakes,
+             aes(x = long,
+                 y = lat,
+                 size = mag),
+             alpha = 0.4)
+```
+
+### Use the scale_size_continuous layer to set the minimum and maximum point sizes used for magnitude.
+```{r}
+base_map + 
+  geom_point(data = earthquakes,
+             aes(x = long,
+                 y = lat,
+                 size = mag),
+             alpha = 0.4) +
+  scale_size_continuous(range = c(0.5,3), name = "Magnitude")
+```
+
+## Bathymetry: now you try it
+
+```{r}
+min_long <- -90
+max_long <- -58
+min_lat  <- 8
+max_lat  <- 28
+```
+
+```{r}
+blennies <- read_csv("~/Documents/BI485/hongsermeier-baxter_madison/data/blennies.csv")
+```
+
+```{r}
+carib_sea <- getNOAA.bathy(lon1 = min_long,
+                      lon2 = max_long,
+                      lat1 = min_lat,
+                      lat2 = max_lat,
+                      antimeridian = FALSE,
+                      keep = TRUE)
+```
+
+```{r}
+base_map <- autoplot(carib_sea, 
+                     geom = c("raster","contour"),
+                     size = 0.1,
+                     na.rm = TRUE) +
+  scale_fill_etopo(guide = FALSE) +
+  labs(x = "Longitude",
+       y = "Latitude") +
+  theme(axis.title.y = element_text(angle = 0, 
+                                    vjust = 0.5))
+
+base_map
+```
+
+### Add blennies.
+```{r}
+base_map + geom_point(data = blennies,
+                      aes(x = long,
+                          y = lat,
+                          shape = name),
+                      fill = "white",
+                      size = 3)+
+  scale_shape_manual(values = c(21:23))+
+  labs(shape = "Species")+
+  theme(legend.position = "bottom")+
+  theme(legend.text = element_text(face = "italic"))
+```
 
 
 
