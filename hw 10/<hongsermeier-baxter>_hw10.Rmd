@@ -17,3 +17,164 @@ library(ggmap)
 library(marmap)
 ```
 
+# Part 1: Outline maps
+
+## Example: States and counties
+
+### Access specific states and store the results in three data frames.
+```{r}
+# Outline of the 48 contiguous states
+usa <- map_data(map = "state") # Tidyverse or ggplot2 must be loaded
+
+# Outline of just Missouri
+us_missouri <- map_data(map = "state",
+                        region = "missouri")
+
+# Outline of Alabama, Florida, Mississippi, and North Carolina
+us_other <- subset(x = usa, 
+                   subset = region %in% c("alabama",
+                                          "florida",
+                                          "mississippi",
+                                          "north carolina"))
+```
+
+### First layer of the map. These states are filled with gray.
+```{r}
+ggplot() + 
+  geom_polygon(data = us_other, 
+               aes(x = long, 
+                   y = lat, 
+                   group = group), 
+               fill = "gray")
+```
+
+### Add Missouri. This state is filled with black.
+```{r}
+ ggplot() + 
+  geom_polygon(data = us_other, 
+               aes(x = long, 
+                   y = lat, 
+                   group = group), 
+               fill = "gray") +
+  geom_polygon(data = us_missouri, 
+               aes(x = long, y = lat, 
+                   group = group), 
+               fill = "black")
+```
+
+### Add the outline of the states.
+```{r}
+ggplot() + 
+  geom_polygon(data = us_other, 
+               aes(x = long, 
+                   y = lat, 
+                   group = group), 
+               fill = "gray") +
+  geom_polygon(data = us_missouri, 
+               aes(x = long, y = lat, 
+                   group = group), 
+               fill = "black") +
+  geom_polygon(data = usa, 
+               aes(x=long, 
+                   y = lat, 
+                   group = group), 
+               fill = NA, 
+               color = "black")
+```
+
+### Replace default theme and add coord_fixed layer.
+```{r}
+# Add the filled states first so that the black outlines of all
+# states are overlaid on top.
+us_map <- ggplot() + 
+  geom_polygon(data = us_other, 
+               aes(x = long, 
+                   y = lat, 
+                   group = group), 
+               fill = "gray") +
+  geom_polygon(data = us_missouri, 
+               aes(x = long, y = lat, 
+                   group = group), 
+               fill = "black") +
+  geom_polygon(data = usa, 
+               aes(x=long, 
+                   y = lat, 
+                   group = group), 
+               fill = NA, 
+               color = "black") + 
+  theme_map() +
+  coord_fixed(1.3)
+
+us_map
+```
+
+### Create map of Missouri with the outlines of the counties and Scott County filled with black.
+```{r}
+missouri <- map_data("county", "missouri")
+mo_scott <- subset(missouri, subregion %in% c("scott"))
+
+mo_map <- ggplot() + 
+  geom_polygon(data = missouri, aes(x=long, y = lat, group = group), fill = NA, color = "black") + 
+  geom_polygon(data = mo_scott, aes(x = long, y = lat, group = group), fill = "black") +
+  theme_map() +
+  coord_fixed(1.3)
+
+mo_map
+```
+
+### Use patchwork to display maps side by side.
+```{r}
+us_map + mo_map + plot_layout(ncol = 2, widths = c(1.5,1))
+```
+
+## Outline maps: your turn
+
+### US map
+```{r}
+us_illinois <- map_data(map = "state",
+                        region = "illinois")
+
+us_map <- ggplot() + 
+  geom_polygon(data = us_illinois, 
+               aes(x = long, y = lat, 
+                   group = group), 
+               fill = "black") +
+  geom_polygon(data = usa, 
+               aes(x=long, 
+                   y = lat, 
+                   group = group), 
+               fill = NA, 
+               color = "black") + 
+  theme_map() +
+  coord_fixed(1.3)
+
+us_map
+```
+
+### Illinois map
+```{r}
+illinois <- map_data("county", "illinois")
+il_madison <- subset(illinois, subregion %in% c("madison"))
+il_iroquois <- subset(illinois, subregion %in% c("iroquois"))
+il_hamilton <- subset(illinois, subregion %in% c("hamilton"))
+
+illinois_map <- ggplot() + 
+  geom_polygon(data = illinois, aes(x=long, y = lat, group = group), fill = NA, color = "black") + 
+  geom_polygon(data = il_madison, aes(x = long, y = lat, group = group), fill = "black") +
+  theme_map() +
+  geom_polygon(data = il_iroquois, aes(x = long, y = lat, group = group), fill = "gray") +
+  theme_map() +
+  geom_polygon(data = il_hamilton, aes(x = long, y = lat, group = group), fill = "gray") +
+  theme_map() +
+  coord_fixed(1.3)
+
+illinois_map
+```
+
+
+
+
+
+
+
+
