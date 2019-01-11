@@ -1,0 +1,19 @@
+---
+title: "HW 10: Maps"
+author: "Madison Hongsermeier-Baxter"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(raster)
+library(tidyverse)
+library(ggthemes)
+library(patchwork)
+library(maptools)
+library(ggmap)
+library(marmap)
+```
+
